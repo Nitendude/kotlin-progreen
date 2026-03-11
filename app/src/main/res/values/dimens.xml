@@ -4,4 +4,5 @@
     <dimen name="space_md">16dp</dimen>
     <dimen name="space_lg">24dp</dimen>
     <dimen name="space_xl">32dp</dimen>
+    <dimen name="pill_radius">18dp</dimen>
 </resources>

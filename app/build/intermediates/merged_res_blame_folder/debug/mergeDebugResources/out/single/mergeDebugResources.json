@@ -1,0 +1,234 @@
+[
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_fade_in.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/fade_in.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_item_category.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_category.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_activity_exit.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/activity_exit.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_splash_logo_in.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/splash_logo_in.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_input.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_input.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_fade_out.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/fade_out.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_item_history.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_history.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_gradient.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_gradient.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_activity_auth.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_submit.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_submit.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/navigation_nav_graph.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/navigation/nav_graph.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_splash.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_splash.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_home.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_home.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_fade_slide_up.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/fade_slide_up.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/menu_bottom_nav_menu.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_icon_circle.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_icon_circle.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_rewards.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_rewards.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_pill_green.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_pill_green.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_item_dashboard_card.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_dashboard_card.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_screen_gradient.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_screen_gradient.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_history.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_history.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_category.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_category.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_slide_out_left.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/slide_out_left.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_login.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_activity_login.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_main.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_main.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_activity_enter.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/activity_enter.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_rewards.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_rewards.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_primary_button.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_primary_button.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_slide_out_right.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/slide_out_right.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_card_pop_in.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/card_pop_in.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_activity_pop_exit.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/activity_pop_exit.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_bubble_card.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_bubble_card.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_button_primary.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_button_primary.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_activity_register.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_profile.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_profile.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_register.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_register.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_circle_mint.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_circle_mint.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_profile.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/menu_menu_bottom_nav.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/menu/menu_bottom_nav.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_item_reward.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_reward.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_reward.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_reward.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_home.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_slide_in_right.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/slide_in_right.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_soft_card.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_soft_card.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_bg_circle_green.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/bg_circle_green.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_history.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_history.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_slide_up_fade.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/slide_up_fade.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_activity_splash.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_scale_pop.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/scale_pop.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_slide_in_left.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/slide_in_left.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_activity_main.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_recycle.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_recycle.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/anim_activity_pop_enter.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/anim/activity_pop_enter.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_categories.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_categories.xml"
+    }
+]

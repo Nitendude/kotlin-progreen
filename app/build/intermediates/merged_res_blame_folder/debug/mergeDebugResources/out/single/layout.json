@@ -1,0 +1,70 @@
+[
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/activity_register.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/item_dashboard_card.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_dashboard_card.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_submit.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_submit.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_history.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_history.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/item_reward.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_reward.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_register.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_register.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/activity_auth.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_auth.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/item_category.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_category.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/activity_main.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_profile.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_categories.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_categories.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_rewards.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_rewards.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_login.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_login.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/fragment_home.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/activity_splash.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/activity_login.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-mergeDebugResources-47:/layout/item_history.xml",
+        "source": "com.progreen.recycling.app-main-50:/layout/item_history.xml"
+    }
+]
