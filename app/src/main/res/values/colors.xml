@@ -1,0 +1,29 @@
+<resources>
+    <color name="green_primary">#1E7A4F</color>
+    <color name="green_primary_dark">#145236</color>
+    <color name="green_accent">#60BF7A</color>
+    <color name="green_soft">#EAF8EE</color>
+    <color name="green_mint">#D6F1DD</color>
+    <color name="green_200">#C7EFD2</color>
+    <color name="green_500">#2F9C5A</color>
+    <color name="green_700">#1E7A4F</color>
+    <color name="green_900">#145236</color>
+    <color name="mint_50">#F2FBF5</color>
+    <color name="text_primary">#1B2B22</color>
+    <color name="text_secondary">#5E7468</color>
+    <color name="white">#FFFFFF</color>
+    <color name="surface">#F8FCF9</color>
+    <color name="warning">#F1A43C</color>
+    <color name="error">#D85151</color>
+    <color name="eco_green_50">#EAF8EE</color>
+    <color name="eco_green_100">#D6F1DD</color>
+    <color name="eco_green_500">#2F9C5A</color>
+    <color name="eco_green_700">#1E7A4F</color>
+    <color name="eco_green_900">#145236</color>
+    <color name="eco_card">#FFFFFF</color>
+    <color name="eco_bg">#F8FCF9</color>
+    <color name="eco_dark">#1B2B22</color>
+    <color name="eco_teal">#60BF7A</color>
+    <color name="eco_text_primary">#1B2B22</color>
+    <color name="eco_text_secondary">#5E7468</color>
+</resources>

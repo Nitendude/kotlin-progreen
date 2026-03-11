@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.RecyclingRewardsApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/green_accent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:windowBackground">@color/surface</item>
+    </style>
+
+    <style name="Theme.RecycleRewards" parent="Theme.RecyclingRewardsApp" />
+    <style name="Theme.RecycleRewards.Splash" parent="Theme.RecyclingRewardsApp">
+        <item name="android:windowBackground">@drawable/bg_gradient</item>
+    </style>
+</resources>
