@@ -27,7 +27,16 @@ public final class FragmentHomeBinding implements ViewBinding {
   public final MaterialCardView cardHistory;
 
   @NonNull
+  public final MaterialCardView cardLguMap;
+
+  @NonNull
+  public final MaterialCardView cardMyQr;
+
+  @NonNull
   public final MaterialCardView cardRewards;
+
+  @NonNull
+  public final MaterialCardView cardScanPlastic;
 
   @NonNull
   public final MaterialCardView cardSubmit;
@@ -38,17 +47,35 @@ public final class FragmentHomeBinding implements ViewBinding {
   @NonNull
   public final TextView pointsValue;
 
+  @NonNull
+  public final TextView roleBadge;
+
+  @NonNull
+  public final TextView roleNotice;
+
+  @NonNull
+  public final TextView welcomeName;
+
   private FragmentHomeBinding(@NonNull ScrollView rootView,
       @NonNull MaterialCardView cardCategories, @NonNull MaterialCardView cardHistory,
-      @NonNull MaterialCardView cardRewards, @NonNull MaterialCardView cardSubmit,
-      @NonNull MaterialCardView pointsCard, @NonNull TextView pointsValue) {
+      @NonNull MaterialCardView cardLguMap, @NonNull MaterialCardView cardMyQr,
+      @NonNull MaterialCardView cardRewards, @NonNull MaterialCardView cardScanPlastic,
+      @NonNull MaterialCardView cardSubmit, @NonNull MaterialCardView pointsCard,
+      @NonNull TextView pointsValue, @NonNull TextView roleBadge, @NonNull TextView roleNotice,
+      @NonNull TextView welcomeName) {
     this.rootView = rootView;
     this.cardCategories = cardCategories;
     this.cardHistory = cardHistory;
+    this.cardLguMap = cardLguMap;
+    this.cardMyQr = cardMyQr;
     this.cardRewards = cardRewards;
+    this.cardScanPlastic = cardScanPlastic;
     this.cardSubmit = cardSubmit;
     this.pointsCard = pointsCard;
     this.pointsValue = pointsValue;
+    this.roleBadge = roleBadge;
+    this.roleNotice = roleNotice;
+    this.welcomeName = welcomeName;
   }
 
   @Override
@@ -90,9 +117,27 @@ public final class FragmentHomeBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.cardLguMap;
+      MaterialCardView cardLguMap = ViewBindings.findChildViewById(rootView, id);
+      if (cardLguMap == null) {
+        break missingId;
+      }
+
+      id = R.id.cardMyQr;
+      MaterialCardView cardMyQr = ViewBindings.findChildViewById(rootView, id);
+      if (cardMyQr == null) {
+        break missingId;
+      }
+
       id = R.id.cardRewards;
       MaterialCardView cardRewards = ViewBindings.findChildViewById(rootView, id);
       if (cardRewards == null) {
+        break missingId;
+      }
+
+      id = R.id.cardScanPlastic;
+      MaterialCardView cardScanPlastic = ViewBindings.findChildViewById(rootView, id);
+      if (cardScanPlastic == null) {
         break missingId;
       }
 
@@ -114,8 +159,27 @@ public final class FragmentHomeBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentHomeBinding((ScrollView) rootView, cardCategories, cardHistory,
-          cardRewards, cardSubmit, pointsCard, pointsValue);
+      id = R.id.roleBadge;
+      TextView roleBadge = ViewBindings.findChildViewById(rootView, id);
+      if (roleBadge == null) {
+        break missingId;
+      }
+
+      id = R.id.roleNotice;
+      TextView roleNotice = ViewBindings.findChildViewById(rootView, id);
+      if (roleNotice == null) {
+        break missingId;
+      }
+
+      id = R.id.welcomeName;
+      TextView welcomeName = ViewBindings.findChildViewById(rootView, id);
+      if (welcomeName == null) {
+        break missingId;
+      }
+
+      return new FragmentHomeBinding((ScrollView) rootView, cardCategories, cardHistory, cardLguMap,
+          cardMyQr, cardRewards, cardScanPlastic, cardSubmit, pointsCard, pointsValue, roleBadge,
+          roleNotice, welcomeName);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

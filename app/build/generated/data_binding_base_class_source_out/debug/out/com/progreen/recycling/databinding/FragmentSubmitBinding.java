@@ -4,9 +4,8 @@ package com.progreen.recycling.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,25 +22,21 @@ public final class FragmentSubmitBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
-  public final Spinner categorySpinner;
+  public final MaterialButton regenerateSubmitQrButton;
 
   @NonNull
-  public final TextView estimatedPoints;
+  public final ImageView submitQrImage;
 
   @NonNull
-  public final EditText quantityInput;
+  public final TextView submitQrPayloadPreview;
 
-  @NonNull
-  public final MaterialButton submitButton;
-
-  private FragmentSubmitBinding(@NonNull ScrollView rootView, @NonNull Spinner categorySpinner,
-      @NonNull TextView estimatedPoints, @NonNull EditText quantityInput,
-      @NonNull MaterialButton submitButton) {
+  private FragmentSubmitBinding(@NonNull ScrollView rootView,
+      @NonNull MaterialButton regenerateSubmitQrButton, @NonNull ImageView submitQrImage,
+      @NonNull TextView submitQrPayloadPreview) {
     this.rootView = rootView;
-    this.categorySpinner = categorySpinner;
-    this.estimatedPoints = estimatedPoints;
-    this.quantityInput = quantityInput;
-    this.submitButton = submitButton;
+    this.regenerateSubmitQrButton = regenerateSubmitQrButton;
+    this.submitQrImage = submitQrImage;
+    this.submitQrPayloadPreview = submitQrPayloadPreview;
   }
 
   @Override
@@ -71,32 +66,26 @@ public final class FragmentSubmitBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.categorySpinner;
-      Spinner categorySpinner = ViewBindings.findChildViewById(rootView, id);
-      if (categorySpinner == null) {
+      id = R.id.regenerateSubmitQrButton;
+      MaterialButton regenerateSubmitQrButton = ViewBindings.findChildViewById(rootView, id);
+      if (regenerateSubmitQrButton == null) {
         break missingId;
       }
 
-      id = R.id.estimatedPoints;
-      TextView estimatedPoints = ViewBindings.findChildViewById(rootView, id);
-      if (estimatedPoints == null) {
+      id = R.id.submitQrImage;
+      ImageView submitQrImage = ViewBindings.findChildViewById(rootView, id);
+      if (submitQrImage == null) {
         break missingId;
       }
 
-      id = R.id.quantityInput;
-      EditText quantityInput = ViewBindings.findChildViewById(rootView, id);
-      if (quantityInput == null) {
+      id = R.id.submitQrPayloadPreview;
+      TextView submitQrPayloadPreview = ViewBindings.findChildViewById(rootView, id);
+      if (submitQrPayloadPreview == null) {
         break missingId;
       }
 
-      id = R.id.submitButton;
-      MaterialButton submitButton = ViewBindings.findChildViewById(rootView, id);
-      if (submitButton == null) {
-        break missingId;
-      }
-
-      return new FragmentSubmitBinding((ScrollView) rootView, categorySpinner, estimatedPoints,
-          quantityInput, submitButton);
+      return new FragmentSubmitBinding((ScrollView) rootView, regenerateSubmitQrButton,
+          submitQrImage, submitQrPayloadPreview);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
