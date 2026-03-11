@@ -12,28 +12,36 @@
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\drawable\\bg_bubble_card.xml"
     },
     {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_slide_in_left.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\slide_in_left.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable/ic_launcher_foreground.xml"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_scale_pop.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\scale_pop.xml"
     },
     {
-        "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_fade_in.xml.flat",
-        "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\fade_in.xml"
-    },
-    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\navigation_nav_graph.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\navigation\\nav_graph.xml"
     },
     {
-        "merged": "com.progreen.recycling.app-debug-48:/layout_fragment_submit.xml.flat",
-        "source": "com.progreen.recycling.app-main-50:/layout/fragment_submit.xml"
+        "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_fade_in.xml.flat",
+        "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\fade_in.xml"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_slide_up_fade.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\slide_up_fade.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-hdpi/ic_launcher.png"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
@@ -96,6 +104,10 @@
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\activity_exit.xml"
     },
     {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_fade_out.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\fade_out.xml"
     },
@@ -120,6 +132,10 @@
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\drawable\\bg_primary_button.xml"
     },
     {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\layout_fragment_register.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\layout\\fragment_register.xml"
     },
@@ -136,12 +152,24 @@
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\drawable\\ic_reward.xml"
     },
     {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\layout_activity_register.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\layout\\activity_register.xml"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\menu_bottom_nav_menu.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\menu\\bottom_nav_menu.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-hdpi/ic_launcher_round.png"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\layout_fragment_lgu_map.xml.flat",
@@ -170,6 +198,10 @@
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\anim_card_pop_in.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\anim\\card_pop_in.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/drawable-nodpi_progreen.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/drawable-nodpi/progreen.png"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
@@ -212,6 +244,10 @@
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\layout\\item_category.xml"
     },
     {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\layout_activity_main.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\layout\\activity_main.xml"
     },
@@ -236,8 +272,16 @@
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\drawable\\bg_splash.xml"
     },
     {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\layout_activity_login.xml.flat",
         "source": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-main-50:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "com.progreen.recycling.app-debug-48:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.progreen.recycling.app-main-50:/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
         "merged": "C:\\Users\\John Philip Maniego\\.gradle\\daemon\\9.0.0\\com.progreen.recycling.app-debug-48:\\layout_item_history.xml.flat",
