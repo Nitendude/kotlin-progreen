@@ -13,6 +13,8 @@ class ProfileViewModel(
 
     fun getPoints(): Int = repository.getPoints()
 
+    fun getRoleLabel(): String = repository.getUserRole().name
+
     fun getSubmissionCount(): Int = repository.getSubmissionHistory().size
 
     fun logout() = repository.logout()

@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AdapterView
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.progreen.recycling.R
 import com.progreen.recycling.data.model.RecyclingCategory
 import com.progreen.recycling.data.repository.AppRepository
 import com.progreen.recycling.databinding.FragmentSubmitBinding
@@ -44,6 +45,14 @@ class SubmitFragment : Fragment() {
             android.R.layout.simple_spinner_dropdown_item,
             labels
         )
+        binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                updateEstimatedPoints()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+        binding.quantityInput.doAfterTextChanged { updateEstimatedPoints() }
 
         binding.submitButton.setOnClickListener {
             val weight = binding.quantityInput.text?.toString()?.toDoubleOrNull()
@@ -58,7 +67,16 @@ class SubmitFragment : Fragment() {
 
             requireContext().toast("Submitted: +${result.pointsEarned} points")
             binding.quantityInput.text?.clear()
+            binding.estimatedPoints.text = "Estimated Points: 0"
         }
+    }
+
+    private fun updateEstimatedPoints() {
+        if (categories.isEmpty()) return
+        val weight = binding.quantityInput.text?.toString()?.toDoubleOrNull() ?: 0.0
+        val selected = categories[binding.categorySpinner.selectedItemPosition]
+        val estimated = (weight * selected.pointsPerKg).toInt()
+        binding.estimatedPoints.text = "Estimated Points: $estimated"
     }
 
     override fun onDestroyView() {

@@ -49,7 +49,8 @@ class ProfileFragment : Fragment() {
         super.onResume()
         binding.profileName.text = viewModel.getName()
         binding.profileEmail.text = viewModel.getEmail()
-        binding.profilePoints.text = "Points: ${viewModel.getPoints()} | Submissions: ${viewModel.getSubmissionCount()}"
+        binding.profilePoints.text =
+            "Role: ${viewModel.getRoleLabel()} | Points: ${viewModel.getPoints()} | Submissions: ${viewModel.getSubmissionCount()}"
     }
 
     override fun onDestroyView() {

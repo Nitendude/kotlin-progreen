@@ -108,6 +108,15 @@
                     android:text="Don't have an account? Register"
                     android:textColor="@color/green_primary"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="Demo roles: user, lgu, company, admin @progreen.app | pass: 123456"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

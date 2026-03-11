@@ -42,8 +42,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openHistoryScreen() {
+        openOverlayFragment(HistoryFragment())
+    }
+
+    fun openOverlayFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, HistoryFragment())
+            .replace(R.id.fragmentContainer, fragment)
             .addToBackStack(null)
             .commit()
     }
