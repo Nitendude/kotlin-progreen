@@ -15,17 +15,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Plastic Type Scanner"
+            android:text="Live Plastic Scanner"
             android:textColor="@color/text_primary"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/acceptedTypesLabel"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Mock scanner for accepted plastic donations"
-            android:textColor="@color/text_secondary" />
+            android:text="Accepted: PET - WHITE, PET - COLORED, HDPE, LDPE, PE, TIN CANS, CARTONS"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -41,22 +43,29 @@
                 android:orientation="vertical"
                 android:padding="18dp">
 
-                <Spinner
-                    android:id="@+id/scannerTypeSpinner"
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/cameraPreviewView"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="220dp"
                     android:background="@drawable/bg_input"
-                    android:paddingHorizontal="10dp" />
+                    android:keepScreenOn="true" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/scanButton"
+                    android:id="@+id/toggleLiveScanButton"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:layout_marginTop="12dp"
-                    android:text="Scan Type"
+                    android:text="Start Live Scan"
                     android:textAllCaps="false"
                     app:backgroundTint="@color/green_primary"
                     app:cornerRadius="26dp" />
+
+                <ProgressBar
+                    android:id="@+id/analyzingProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/scanResultTitle"
@@ -69,10 +78,10 @@
 
                 <TextView
                     android:id="@+id/scanResultText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Select a plastic type and scan to validate acceptance."
+                    android:text="Start live scan to auto-detect every 5 seconds."
                     android:textColor="@color/text_secondary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

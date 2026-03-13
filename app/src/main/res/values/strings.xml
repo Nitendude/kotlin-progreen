@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProGreen Recycling</string>
+    <string name="app_name">CycleMint</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="create_account">Create account</string>

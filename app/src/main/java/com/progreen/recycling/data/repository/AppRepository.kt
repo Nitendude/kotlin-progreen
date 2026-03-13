@@ -2,13 +2,21 @@ package com.progreen.recycling.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.progreen.recycling.BuildConfig
 import com.progreen.recycling.data.model.DemoProfile
 import com.progreen.recycling.data.model.LguSite
+import com.progreen.recycling.data.model.PlasticDetectionResult
 import com.progreen.recycling.data.model.RecyclingCategory
 import com.progreen.recycling.data.model.RewardItem
 import com.progreen.recycling.data.model.Submission
 import com.progreen.recycling.data.model.User
 import com.progreen.recycling.data.model.UserRole
+import com.progreen.recycling.data.remote.GroqApiClient
+import com.progreen.recycling.data.remote.GroqChatRequest
+import com.progreen.recycling.data.remote.GroqContent
+import com.progreen.recycling.data.remote.GroqImageUrl
+import com.progreen.recycling.data.remote.GroqMessage
+import org.json.JSONException
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Locale
@@ -35,6 +43,51 @@ class AppRepository private constructor(context: Context) {
     )
 
     fun getAcceptedPlasticTypes(): List<String> = getCategories().map { it.name }
+
+    suspend fun detectPlasticWithGroq(imageDataUrl: String): Result<PlasticDetectionResult> {
+        val apiKey = BuildConfig.GROQ_API_KEY
+        if (apiKey.isBlank()) {
+            return Result.failure(IllegalStateException("Missing GROQ_API_KEY. Add it in local.properties."))
+        }
+
+        val acceptedTypes = getAcceptedPlasticTypes().joinToString(", ")
+        val prompt = """
+            You are a recycling assistant.
+            Analyze the provided image of a recyclable material.
+            Choose the closest type ONLY from this list: $acceptedTypes.
+            If it does not match any accepted type, respond with plasticType as UNKNOWN.
+
+            Respond strictly as JSON with this schema:
+            {"plasticType":"PET - WHITE|PET - COLORED|HDPE|LDPE|PE|TIN CANS|CARTONS|UNKNOWN","donatable":true|false,"confidence":0-100,"reason":"short reason"}
+        """.trimIndent()
+
+        return try {
+            val request = GroqChatRequest(
+                model = GROQ_VISION_MODEL,
+                messages = listOf(
+                    GroqMessage(
+                        role = "user",
+                        content = listOf(
+                            GroqContent(type = "text", text = prompt),
+                            GroqContent(type = "image_url", imageUrl = GroqImageUrl(url = imageDataUrl))
+                        )
+                    )
+                )
+            )
+
+            val response = GroqApiClient.service.chatCompletions(
+                authorization = "Bearer $apiKey",
+                body = request
+            )
+            val raw = response.choices.firstOrNull()?.message?.content?.let(::extractMessageText)
+                ?: return Result.failure(IllegalStateException("Empty Groq response"))
+
+            val parsed = parseDetectionJson(raw)
+            Result.success(parsed)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     fun getNearestLguSites(): List<LguSite> = listOf(
         LguSite("Quezon City Eco Hub", "Elliptical Road, Quezon City", 1.8, "Quezon City Eco Hub"),
@@ -198,6 +251,50 @@ class AppRepository private constructor(context: Context) {
         prefs.edit().putString(KEY_HISTORY, array.toString()).apply()
     }
 
+    private fun extractMessageText(content: com.google.gson.JsonElement): String {
+        return when {
+            content.isJsonPrimitive -> content.asString
+            content.isJsonArray -> {
+                val parts = content.asJsonArray.mapNotNull { part ->
+                    if (part.isJsonObject && part.asJsonObject.has("text")) {
+                        part.asJsonObject.get("text")?.asString
+                    } else {
+                        null
+                    }
+                }
+                parts.joinToString("\n")
+            }
+            else -> content.toString()
+        }
+    }
+
+    private fun parseDetectionJson(rawContent: String): PlasticDetectionResult {
+        val jsonChunk = extractJsonObject(rawContent)
+        val json = JSONObject(jsonChunk)
+
+        val type = json.optString("plasticType", "UNKNOWN").uppercase(Locale.getDefault())
+        val normalizedType = getAcceptedPlasticTypes().firstOrNull { it.uppercase(Locale.getDefault()) == type } ?: "UNKNOWN"
+        val confidence = json.optInt("confidence", 0).coerceIn(0, 100)
+        val reason = json.optString("reason", "No reason provided")
+        val donatable = normalizedType != "UNKNOWN" && json.optBoolean("donatable", true)
+
+        return PlasticDetectionResult(
+            plasticType = normalizedType,
+            donatable = donatable,
+            confidence = confidence,
+            reason = reason
+        )
+    }
+
+    private fun extractJsonObject(rawContent: String): String {
+        val start = rawContent.indexOf('{')
+        val end = rawContent.lastIndexOf('}')
+        if (start == -1 || end == -1 || end <= start) {
+            throw JSONException("Groq output was not valid JSON")
+        }
+        return rawContent.substring(start, end + 1)
+    }
+
     companion object {
         private const val PREFS_NAME = "progreen_prefs"
         private const val KEY_NAME = "name"
@@ -207,6 +304,7 @@ class AppRepository private constructor(context: Context) {
         private const val KEY_LOGGED_IN = "logged_in"
         private const val KEY_POINTS = "points"
         private const val KEY_HISTORY = "history"
+        private const val GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
         @Volatile
         private var INSTANCE: AppRepository? = null
