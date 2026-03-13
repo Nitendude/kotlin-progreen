@@ -1,14 +1,17 @@
 package com.progreen.recycling.ui.rewards
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.progreen.recycling.R
 import com.progreen.recycling.data.model.RewardItem
 import com.progreen.recycling.databinding.ItemRewardBinding
 
 class RewardAdapter(
     private var pointsBalance: Int,
-    private val items: List<RewardItem>,
+    private var items: List<RewardItem>,
     private val onRedeemClick: (RewardItem) -> Unit
 ) : RecyclerView.Adapter<RewardAdapter.RewardViewHolder>() {
 
@@ -23,8 +26,9 @@ class RewardAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    fun updatePoints(newPoints: Int) {
+    fun updateData(newPoints: Int, newItems: List<RewardItem>) {
         pointsBalance = newPoints
+        items = newItems
         notifyDataSetChanged()
     }
 
@@ -34,8 +38,24 @@ class RewardAdapter(
 
         fun bind(item: RewardItem, pointsBalance: Int, onRedeemClick: (RewardItem) -> Unit) {
             binding.rewardName.text = item.title
-            binding.rewardDescription.text = item.provider?.let { "Provider: $it" } ?: "Redeem eco-friendly perks"
+            val provider = item.provider?.let { "Claim at: $it" } ?: "Redeem eco-friendly perks"
+            val details = item.description?.takeIf { it.isNotBlank() } ?: "No description provided"
+            binding.rewardDescription.text = "$provider\n$details"
             binding.rewardCost.text = "${item.costPoints} pts"
+
+            if (item.redeemCode.isNullOrBlank()) {
+                binding.rewardCode.visibility = View.GONE
+            } else {
+                binding.rewardCode.visibility = View.VISIBLE
+                binding.rewardCode.text = "Code available after redeem"
+            }
+
+            binding.rewardImage.load(item.imageUrl) {
+                crossfade(true)
+                placeholder(R.drawable.ic_reward)
+                error(R.drawable.ic_reward)
+            }
+
             binding.redeemButton.isEnabled = pointsBalance >= item.costPoints
             binding.redeemButton.alpha = if (binding.redeemButton.isEnabled) 1f else 0.5f
             binding.redeemButton.setOnClickListener { onRedeemClick(item) }

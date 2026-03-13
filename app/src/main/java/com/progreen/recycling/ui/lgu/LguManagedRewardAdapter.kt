@@ -30,6 +30,8 @@ class LguManagedRewardAdapter(
         fun bind(item: RewardItem) {
             binding.lguRewardTitle.text = item.title
             binding.lguRewardCost.text = "${item.costPoints} pts"
+            binding.lguRewardDescription.text = item.description ?: "No description"
+            binding.lguRewardCode.text = item.redeemCode?.let { "Code: $it" } ?: "Code: none"
         }
     }
 }

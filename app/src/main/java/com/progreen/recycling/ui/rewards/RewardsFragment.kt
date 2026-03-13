@@ -40,7 +40,13 @@ class RewardsFragment : Fragment() {
             onRedeemClick = { reward ->
                 val redemption = viewModel.redeem(reward.id)
                 if (redemption.isSuccess) {
-                    requireContext().toast("Redeemed ${reward.title}")
+                    val code = redemption.getOrNull()
+                    val message = if (code.isNullOrBlank()) {
+                        "Redeemed ${reward.title}"
+                    } else {
+                        "Redeemed ${reward.title}. Claim code: $code"
+                    }
+                    requireContext().toast(message)
                     refreshPoints()
                 } else {
                     requireContext().toast("Not enough points")
@@ -60,9 +66,16 @@ class RewardsFragment : Fragment() {
 
     private fun refreshPoints() {
         val points = viewModel.getPoints()
+        val rewards = viewModel.getRewards().sortedWith(
+            compareByDescending<com.progreen.recycling.data.model.RewardItem> { points >= it.costPoints }
+                .thenBy { it.costPoints }
+        )
+        val redeemable = rewards.count { points >= it.costPoints }
+
         binding.rewardsPointsView.text = "Your Points: $points"
+        binding.rewardsSummaryView.text = "$redeemable rewards available with your current points"
         if (::adapter.isInitialized) {
-            adapter.updatePoints(points)
+            adapter.updateData(points, rewards)
         }
     }
 

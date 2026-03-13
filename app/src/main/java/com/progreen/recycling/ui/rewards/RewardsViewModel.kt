@@ -12,5 +12,5 @@ class RewardsViewModel(
 
     fun getPoints(): Int = repository.getPoints()
 
-    fun redeem(rewardId: String): Result<Unit> = repository.redeemReward(rewardId)
+    fun redeem(rewardId: String): Result<String?> = repository.redeemReward(rewardId)
 }

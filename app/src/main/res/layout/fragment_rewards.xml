@@ -24,6 +24,14 @@
         android:textColor="@color/green_primary"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/rewardsSummaryView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="0 rewards available with your current points"
+        android:textColor="@color/text_secondary" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rewardsRecycler"
         android:layout_width="match_parent"

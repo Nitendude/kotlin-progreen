@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import com.progreen.recycling.BuildConfig
 import com.progreen.recycling.data.model.DemoProfile
 import com.progreen.recycling.data.model.DonationCreditOutcome
+import com.progreen.recycling.data.model.LguDashboardStats
+import com.progreen.recycling.data.model.LguDonationRecord
 import com.progreen.recycling.data.model.LguSite
 import com.progreen.recycling.data.model.PlasticDetectionResult
 import com.progreen.recycling.data.model.RecyclingCategory
@@ -98,11 +100,11 @@ class AppRepository private constructor(context: Context) {
 
     fun getRewards(): List<RewardItem> {
         val base = listOf(
-            RewardItem("reward_1", "Eco Tote Bag", 120, "CycleMint"),
-            RewardItem("reward_2", "Plant Seed Kit", 200, "CycleMint"),
-            RewardItem("reward_3", "Reusable Bottle", 260, "CycleMint"),
-            RewardItem("reward_4", "Coffee Voucher", 300, "CycleMint"),
-            RewardItem("reward_5", "Green Store Gift Card", 500, "CycleMint")
+            RewardItem("reward_1", "Eco Tote Bag", 120, "CycleMint", "Reusable shopping tote bag"),
+            RewardItem("reward_2", "Plant Seed Kit", 200, "CycleMint", "Starter seed kit for home gardening"),
+            RewardItem("reward_3", "Reusable Bottle", 260, "CycleMint", "Insulated reusable water bottle"),
+            RewardItem("reward_4", "Coffee Voucher", 300, "CycleMint", "Discount voucher at partner cafes", redeemCode = "COFFEE300"),
+            RewardItem("reward_5", "Green Store Gift Card", 500, "CycleMint", "Gift card for eco-friendly store", redeemCode = "GREEN500")
         )
         return base + getCustomRewards()
     }
@@ -112,7 +114,13 @@ class AppRepository private constructor(context: Context) {
         return getCustomRewards().filter { it.provider == provider }
     }
 
-    fun addLguReward(title: String, costPoints: Int): Result<RewardItem> {
+    fun addLguReward(
+        title: String,
+        costPoints: Int,
+        description: String,
+        imageUrl: String?,
+        redeemCode: String?
+    ): Result<RewardItem> {
         if (getUserRole() != UserRole.LGU) {
             return Result.failure(IllegalStateException("Only LGU accounts can add rewards"))
         }
@@ -120,11 +128,24 @@ class AppRepository private constructor(context: Context) {
             return Result.failure(IllegalArgumentException("Invalid reward details"))
         }
 
+        val trimmedDescription = description.trim().ifBlank { "LGU redeemable reward" }
+        val normalizedImageUrl = imageUrl?.trim()?.takeIf { it.isNotBlank() }
+        if (normalizedImageUrl != null &&
+            !(normalizedImageUrl.startsWith("http://", ignoreCase = true) || normalizedImageUrl.startsWith("https://", ignoreCase = true))
+        ) {
+            return Result.failure(IllegalArgumentException("Image URL must start with http:// or https://"))
+        }
+
+        val normalizedCode = redeemCode?.trim()?.takeIf { it.isNotBlank() }
+
         val item = RewardItem(
             id = "lgu_${System.currentTimeMillis()}",
             title = title.trim(),
             costPoints = costPoints,
-            provider = getUserName()
+            provider = getUserName(),
+            description = trimmedDescription,
+            imageUrl = normalizedImageUrl,
+            redeemCode = normalizedCode
         )
 
         val arr = readCustomRewardsArray()
@@ -134,9 +155,57 @@ class AppRepository private constructor(context: Context) {
                 .put("title", item.title)
                 .put("costPoints", item.costPoints)
                 .put("provider", item.provider)
+                .put("description", item.description)
+                .put("imageUrl", item.imageUrl)
+                .put("redeemCode", item.redeemCode)
         )
         prefs.edit().putString(KEY_LGU_REWARDS, arr.toString()).apply()
         return Result.success(item)
+    }
+
+    fun getLguDashboardStats(): LguDashboardStats {
+        val records = getLguDonationRecords()
+        return LguDashboardStats(
+            donatedKgTotal = records.sumOf { it.weightKg },
+            pointsCreditedTotal = records.sumOf { it.pointsEarned },
+            donationsCount = records.size,
+            rewardsCount = getLguManagedRewards().size
+        )
+    }
+
+    fun getLguDonationRecords(limit: Int = 20): List<LguDonationRecord> {
+        val lguName = getUserName()
+        val marker = "Recorded by LGU $lguName"
+        val accounts = readAccountsObject()
+        val records = mutableListOf<LguDonationRecord>()
+
+        val keys = accounts.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            val account = accounts.optJSONObject(key) ?: continue
+            val userName = account.optString("name", "User")
+            val userEmail = account.optString("email", key)
+            val history = account.optJSONArray("history") ?: JSONArray()
+
+            for (i in 0 until history.length()) {
+                val item = history.optJSONObject(i) ?: continue
+                val notes = item.optString("notes", "")
+                if (!notes.contains(marker, ignoreCase = true)) continue
+
+                records.add(
+                    LguDonationRecord(
+                        userName = userName,
+                        userEmail = userEmail,
+                        categoryName = item.optString("categoryName", "Unknown"),
+                        weightKg = item.optDouble("weightKg", 0.0),
+                        pointsEarned = item.optInt("pointsEarned", 0),
+                        timestamp = item.optLong("timestamp", 0L)
+                    )
+                )
+            }
+        }
+
+        return records.sortedByDescending { it.timestamp }.take(limit)
     }
 
     fun register(user: User): Boolean {
@@ -312,7 +381,7 @@ class AppRepository private constructor(context: Context) {
         return submission
     }
 
-    fun redeemReward(rewardId: String): Result<Unit> {
+    fun redeemReward(rewardId: String): Result<String?> {
         val reward = getRewards().firstOrNull { it.id == rewardId }
             ?: return Result.failure(IllegalArgumentException("Reward not found"))
         val account = getCurrentAccountJson() ?: return Result.failure(IllegalStateException("User not found"))
@@ -321,7 +390,7 @@ class AppRepository private constructor(context: Context) {
         return if (current >= reward.costPoints) {
             account.put("points", current - reward.costPoints)
             saveCurrentAccountJson(account)
-            Result.success(Unit)
+            Result.success(reward.redeemCode)
         } else {
             Result.failure(IllegalStateException("Not enough points"))
         }
@@ -424,7 +493,10 @@ class AppRepository private constructor(context: Context) {
                     id = obj.optString("id", "lgu_$i"),
                     title = obj.optString("title", "Reward"),
                     costPoints = obj.optInt("costPoints", 100),
-                    provider = provider
+                    provider = provider,
+                    description = obj.optString("description", "LGU redeemable reward"),
+                    imageUrl = obj.optString("imageUrl", "").takeIf { it.isNotBlank() },
+                    redeemCode = obj.optString("redeemCode", "").takeIf { it.isNotBlank() }
                 )
             )
         }
