@@ -27,7 +27,7 @@ class AppRepository private constructor(context: Context) {
 
     fun getDemoProfiles(): List<DemoProfile> = listOf(
         DemoProfile("user_demo", "Demo User", "user@progreen.app", "123456", UserRole.USER),
-        DemoProfile("lgu_demo", "Demo LGU Officer", "lgu@progreen.app", "123456", UserRole.LGU),
+        DemoProfile("lgu_demo", "Santo Tomas Batangas", "lgu@progreen.app", "123456", UserRole.LGU),
         DemoProfile("company_demo", "Demo Company", "company@progreen.app", "123456", UserRole.COMPANY),
         DemoProfile("admin_demo", "Demo Admin", "admin@progreen.app", "123456", UserRole.ADMIN)
     )

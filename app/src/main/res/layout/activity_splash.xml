@@ -20,12 +20,11 @@
         android:id="@+id/logoView"
         android:layout_width="110dp"
         android:layout_height="110dp"
-        android:src="@drawable/ic_recycle"
+        android:src="@drawable/app_logo"
         app:layout_constraintBottom_toTopOf="@+id/titleView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/green_primary" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/titleView"
