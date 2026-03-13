@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.progreen.recycling.BuildConfig
 import com.progreen.recycling.data.model.DemoProfile
+import com.progreen.recycling.data.model.DonationCreditOutcome
 import com.progreen.recycling.data.model.LguSite
 import com.progreen.recycling.data.model.PlasticDetectionResult
 import com.progreen.recycling.data.model.RecyclingCategory
@@ -16,8 +17,8 @@ import com.progreen.recycling.data.remote.GroqChatRequest
 import com.progreen.recycling.data.remote.GroqContent
 import com.progreen.recycling.data.remote.GroqImageUrl
 import com.progreen.recycling.data.remote.GroqMessage
-import org.json.JSONException
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.util.Locale
 
@@ -90,19 +91,53 @@ class AppRepository private constructor(context: Context) {
     }
 
     fun getNearestLguSites(): List<LguSite> = listOf(
-        LguSite("Quezon City Eco Hub", "Elliptical Road, Quezon City", 1.8, "Quezon City Eco Hub"),
-        LguSite("Mandaluyong Materials Recovery", "Maysilo Circle, Mandaluyong", 3.1, "Mandaluyong MRF"),
-        LguSite("Pasig Green Center", "Caruncho Ave, Pasig", 4.2, "Pasig Green Center"),
-        LguSite("San Juan Recycling Dropoff", "N. Domingo, San Juan", 5.0, "San Juan recycling drop off")
+        LguSite("Santo Tomas Eco Hub", "Poblacion, Santo Tomas, Batangas", 1.2, "Santo Tomas Batangas Eco Hub"),
+        LguSite("Batangas City Materials Recovery", "Gov. Carpio Rd, Batangas City", 7.4, "Batangas City MRF"),
+        LguSite("Tanauan Recycling Point", "A. Mabini Ave, Tanauan", 9.3, "Tanauan recycling drop off")
     )
 
-    fun getRewards(): List<RewardItem> = listOf(
-        RewardItem("reward_1", "Eco Tote Bag", 120),
-        RewardItem("reward_2", "Plant Seed Kit", 200),
-        RewardItem("reward_3", "Reusable Bottle", 260),
-        RewardItem("reward_4", "Coffee Voucher", 300),
-        RewardItem("reward_5", "Green Store Gift Card", 500)
-    )
+    fun getRewards(): List<RewardItem> {
+        val base = listOf(
+            RewardItem("reward_1", "Eco Tote Bag", 120, "CycleMint"),
+            RewardItem("reward_2", "Plant Seed Kit", 200, "CycleMint"),
+            RewardItem("reward_3", "Reusable Bottle", 260, "CycleMint"),
+            RewardItem("reward_4", "Coffee Voucher", 300, "CycleMint"),
+            RewardItem("reward_5", "Green Store Gift Card", 500, "CycleMint")
+        )
+        return base + getCustomRewards()
+    }
+
+    fun getLguManagedRewards(): List<RewardItem> {
+        val provider = getUserName()
+        return getCustomRewards().filter { it.provider == provider }
+    }
+
+    fun addLguReward(title: String, costPoints: Int): Result<RewardItem> {
+        if (getUserRole() != UserRole.LGU) {
+            return Result.failure(IllegalStateException("Only LGU accounts can add rewards"))
+        }
+        if (title.isBlank() || costPoints <= 0) {
+            return Result.failure(IllegalArgumentException("Invalid reward details"))
+        }
+
+        val item = RewardItem(
+            id = "lgu_${System.currentTimeMillis()}",
+            title = title.trim(),
+            costPoints = costPoints,
+            provider = getUserName()
+        )
+
+        val arr = readCustomRewardsArray()
+        arr.put(
+            JSONObject()
+                .put("id", item.id)
+                .put("title", item.title)
+                .put("costPoints", item.costPoints)
+                .put("provider", item.provider)
+        )
+        prefs.edit().putString(KEY_LGU_REWARDS, arr.toString()).apply()
+        return Result.success(item)
+    }
 
     fun register(user: User): Boolean {
         persistProfile(
@@ -111,6 +146,7 @@ class AppRepository private constructor(context: Context) {
             password = user.password,
             role = user.role
         )
+        ensureAccount(user.name, user.email, user.role)
         return true
     }
 
@@ -125,6 +161,7 @@ class AppRepository private constructor(context: Context) {
                 password = demo.password,
                 role = demo.role
             )
+            ensureAccount(demo.name, demo.email, demo.role)
             return true
         }
 
@@ -139,6 +176,7 @@ class AppRepository private constructor(context: Context) {
         val valid = email.equals(savedEmail, ignoreCase = true) && password == savedPassword
         if (valid) {
             prefs.edit().putBoolean(KEY_LOGGED_IN, true).apply()
+            ensureAccount(getUserName(), savedEmail, getUserRole())
         }
         return valid
     }
@@ -165,35 +203,87 @@ class AppRepository private constructor(context: Context) {
     fun getProfileQrPayload(): String {
         val role = getUserRole().name
         val userId = getUserEmail().lowercase(Locale.getDefault()).replace("@", "_").replace(".", "_")
-        return "PROGREEN|$userId|${getUserName()}|${getUserEmail()}|$role"
+        return "CYCLEMINT|$userId|${getUserName()}|${getUserEmail()}|$role"
     }
 
-    fun getPoints(): Int = prefs.getInt(KEY_POINTS, 0)
+    fun resolveUserFromQr(qrPayload: String): Result<Pair<String, String>> {
+        val email = extractEmailFromQr(qrPayload)
+            ?: return Result.failure(IllegalArgumentException("Invalid QR payload"))
+        val account = getAccount(normalizeEmail(email))
+            ?: return Result.failure(IllegalArgumentException("User account not found"))
+
+        val role = account.optString("role", UserRole.USER.name)
+        if (role != UserRole.USER.name) {
+            return Result.failure(IllegalArgumentException("Scanned QR is not a user account"))
+        }
+        return Result.success(account.optString("name", "User") to account.optString("email", email))
+    }
+
+    fun creditUserDonationFromQr(qrPayload: String, categoryId: String, weightKg: Double): Result<DonationCreditOutcome> {
+        if (getUserRole() != UserRole.LGU) {
+            return Result.failure(IllegalStateException("Only LGU accounts can confirm donations"))
+        }
+        if (weightKg <= 0.0) {
+            return Result.failure(IllegalArgumentException("Weight must be greater than zero"))
+        }
+
+        val email = extractEmailFromQr(qrPayload)
+            ?: return Result.failure(IllegalArgumentException("Invalid QR payload"))
+        val normalizedEmail = normalizeEmail(email)
+        val accounts = readAccountsObject()
+        val account = accounts.optJSONObject(normalizedEmail)
+            ?: return Result.failure(IllegalArgumentException("User account not found"))
+
+        val role = account.optString("role", UserRole.USER.name)
+        if (role != UserRole.USER.name) {
+            return Result.failure(IllegalArgumentException("Scanned QR is not a user account"))
+        }
+
+        val category = getCategories().firstOrNull { it.id == categoryId }
+            ?: return Result.failure(IllegalArgumentException("Unknown category"))
+        val pointsEarned = (weightKg * category.pointsPerKg).toInt()
+        val newBalance = account.optInt("points", 0) + pointsEarned
+
+        val historyArray = account.optJSONArray("history") ?: JSONArray()
+        historyArray.put(
+            JSONObject()
+                .put("categoryId", category.id)
+                .put("categoryName", category.name)
+                .put("weightKg", weightKg)
+                .put("pointsEarned", pointsEarned)
+                .put("notes", "Recorded by LGU ${getUserName()}")
+                .put("timestamp", System.currentTimeMillis())
+        )
+
+        account.put("points", newBalance)
+        account.put("history", historyArray)
+        accounts.put(normalizedEmail, account)
+        writeAccountsObject(accounts)
+
+        return Result.success(
+            DonationCreditOutcome(
+                userName = account.optString("name", "User"),
+                userEmail = account.optString("email", email),
+                pointsEarned = pointsEarned,
+                newBalance = newBalance
+            )
+        )
+    }
+
+    fun getPoints(): Int {
+        val account = getCurrentAccountJson() ?: return 0
+        return account.optInt("points", 0)
+    }
 
     fun getSubmissionHistory(): List<Submission> {
-        val raw = prefs.getString(KEY_HISTORY, "[]") ?: "[]"
-        val array = JSONArray(raw)
-        val list = mutableListOf<Submission>()
-        for (i in 0 until array.length()) {
-            val item = array.getJSONObject(i)
-            list.add(
-                Submission(
-                    categoryId = item.getString("categoryId"),
-                    categoryName = item.getString("categoryName"),
-                    weightKg = item.getDouble("weightKg"),
-                    pointsEarned = item.getInt("pointsEarned"),
-                    notes = item.getString("notes"),
-                    timestamp = item.getLong("timestamp")
-                )
-            )
-        }
-        return list.sortedByDescending { it.timestamp }
+        val account = getCurrentAccountJson() ?: return emptyList()
+        val array = account.optJSONArray("history") ?: JSONArray()
+        return parseHistoryArray(array).sortedByDescending { it.timestamp }
     }
 
     fun submitRecyclable(categoryId: String, weightKg: Double, notes: String): Submission {
         val category = getCategories().first { it.id == categoryId }
         val pointsEarned = (weightKg * category.pointsPerKg).toInt()
-
         val submission = Submission(
             categoryId = category.id,
             categoryName = category.name,
@@ -203,25 +293,57 @@ class AppRepository private constructor(context: Context) {
             timestamp = System.currentTimeMillis()
         )
 
-        val oldHistory = getSubmissionHistory()
-        val updated = listOf(submission) + oldHistory
-        persistHistory(updated)
+        val account = getCurrentAccountJson() ?: JSONObject()
+        val historyArray = account.optJSONArray("history") ?: JSONArray()
+        historyArray.put(
+            JSONObject()
+                .put("categoryId", submission.categoryId)
+                .put("categoryName", submission.categoryName)
+                .put("weightKg", submission.weightKg)
+                .put("pointsEarned", submission.pointsEarned)
+                .put("notes", submission.notes)
+                .put("timestamp", submission.timestamp)
+        )
 
-        val updatedPoints = getPoints() + pointsEarned
-        prefs.edit().putInt(KEY_POINTS, updatedPoints).apply()
+        account.put("points", account.optInt("points", 0) + pointsEarned)
+        account.put("history", historyArray)
+        saveCurrentAccountJson(account)
 
         return submission
     }
 
     fun redeemReward(rewardId: String): Result<Unit> {
-        val reward = getRewards().first { it.id == rewardId }
-        val current = getPoints()
+        val reward = getRewards().firstOrNull { it.id == rewardId }
+            ?: return Result.failure(IllegalArgumentException("Reward not found"))
+        val account = getCurrentAccountJson() ?: return Result.failure(IllegalStateException("User not found"))
+        val current = account.optInt("points", 0)
 
         return if (current >= reward.costPoints) {
-            prefs.edit().putInt(KEY_POINTS, current - reward.costPoints).apply()
+            account.put("points", current - reward.costPoints)
+            saveCurrentAccountJson(account)
             Result.success(Unit)
         } else {
             Result.failure(IllegalStateException("Not enough points"))
+        }
+    }
+
+    private fun ensureAccount(name: String, email: String, role: UserRole) {
+        val normalizedEmail = normalizeEmail(email)
+        val accounts = readAccountsObject()
+        val existing = accounts.optJSONObject(normalizedEmail)
+        if (existing == null) {
+            val legacyPoints = prefs.getInt(KEY_POINTS, 0)
+            val legacyHistory = prefs.getString(KEY_HISTORY, "[]") ?: "[]"
+            accounts.put(
+                normalizedEmail,
+                JSONObject()
+                    .put("name", name)
+                    .put("email", email)
+                    .put("role", role.name)
+                    .put("points", legacyPoints)
+                    .put("history", JSONArray(legacyHistory))
+            )
+            writeAccountsObject(accounts)
         }
     }
 
@@ -235,20 +357,78 @@ class AppRepository private constructor(context: Context) {
             .apply()
     }
 
-    private fun persistHistory(history: List<Submission>) {
-        val array = JSONArray()
-        history.forEach { item ->
-            array.put(
-                JSONObject()
-                    .put("categoryId", item.categoryId)
-                    .put("categoryName", item.categoryName)
-                    .put("weightKg", item.weightKg)
-                    .put("pointsEarned", item.pointsEarned)
-                    .put("notes", item.notes)
-                    .put("timestamp", item.timestamp)
+    private fun parseHistoryArray(array: JSONArray): List<Submission> {
+        val list = mutableListOf<Submission>()
+        for (i in 0 until array.length()) {
+            val item = array.getJSONObject(i)
+            list.add(
+                Submission(
+                    categoryId = item.optString("categoryId"),
+                    categoryName = item.optString("categoryName"),
+                    weightKg = item.optDouble("weightKg", 0.0),
+                    pointsEarned = item.optInt("pointsEarned", 0),
+                    notes = item.optString("notes", ""),
+                    timestamp = item.optLong("timestamp", System.currentTimeMillis())
+                )
             )
         }
-        prefs.edit().putString(KEY_HISTORY, array.toString()).apply()
+        return list
+    }
+
+    private fun readAccountsObject(): JSONObject {
+        val raw = prefs.getString(KEY_ACCOUNTS, "{}") ?: "{}"
+        return try {
+            JSONObject(raw)
+        } catch (_: JSONException) {
+            JSONObject()
+        }
+    }
+
+    private fun writeAccountsObject(accounts: JSONObject) {
+        prefs.edit().putString(KEY_ACCOUNTS, accounts.toString()).apply()
+    }
+
+    private fun getAccount(emailNormalized: String): JSONObject? = readAccountsObject().optJSONObject(emailNormalized)
+
+    private fun getCurrentAccountJson(): JSONObject? {
+        val email = getUserEmail()
+        ensureAccount(getUserName(), email, getUserRole())
+        return getAccount(normalizeEmail(email))
+    }
+
+    private fun saveCurrentAccountJson(account: JSONObject) {
+        val email = normalizeEmail(getUserEmail())
+        val accounts = readAccountsObject()
+        accounts.put(email, account)
+        writeAccountsObject(accounts)
+    }
+
+    private fun readCustomRewardsArray(): JSONArray {
+        val raw = prefs.getString(KEY_LGU_REWARDS, "[]") ?: "[]"
+        return try {
+            JSONArray(raw)
+        } catch (_: JSONException) {
+            JSONArray()
+        }
+    }
+
+    private fun getCustomRewards(): List<RewardItem> {
+        val arr = readCustomRewardsArray()
+        val rewards = mutableListOf<RewardItem>()
+        for (i in 0 until arr.length()) {
+            val obj = arr.getJSONObject(i)
+            val providerValue = obj.optString("provider", "")
+            val provider = providerValue.takeIf { it.isNotBlank() }
+            rewards.add(
+                RewardItem(
+                    id = obj.optString("id", "lgu_$i"),
+                    title = obj.optString("title", "Reward"),
+                    costPoints = obj.optInt("costPoints", 100),
+                    provider = provider
+                )
+            )
+        }
+        return rewards
     }
 
     private fun extractMessageText(content: com.google.gson.JsonElement): String {
@@ -316,6 +496,19 @@ class AppRepository private constructor(context: Context) {
         return rawContent.substring(start, end + 1)
     }
 
+    private fun extractEmailFromQr(qrPayload: String): String? {
+        val trimmed = qrPayload.trim()
+        val upper = trimmed.uppercase(Locale.getDefault())
+        if (trimmed.contains("|") && (upper.startsWith("CYCLEMINT|") || upper.startsWith("PROGREEN|"))) {
+            val parts = trimmed.split('|')
+            if (parts.size >= 4) return parts[3]
+        }
+        val emailRegex = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+        return emailRegex.find(trimmed)?.value
+    }
+
+    private fun normalizeEmail(email: String): String = email.trim().lowercase(Locale.getDefault())
+
     companion object {
         private const val PREFS_NAME = "progreen_prefs"
         private const val KEY_NAME = "name"
@@ -325,6 +518,8 @@ class AppRepository private constructor(context: Context) {
         private const val KEY_LOGGED_IN = "logged_in"
         private const val KEY_POINTS = "points"
         private const val KEY_HISTORY = "history"
+        private const val KEY_ACCOUNTS = "accounts"
+        private const val KEY_LGU_REWARDS = "lgu_rewards"
         private const val GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
         @Volatile

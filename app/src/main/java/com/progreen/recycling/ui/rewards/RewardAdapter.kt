@@ -34,7 +34,7 @@ class RewardAdapter(
 
         fun bind(item: RewardItem, pointsBalance: Int, onRedeemClick: (RewardItem) -> Unit) {
             binding.rewardName.text = item.title
-            binding.rewardDescription.text = "Redeem eco-friendly perks"
+            binding.rewardDescription.text = item.provider?.let { "Provider: $it" } ?: "Redeem eco-friendly perks"
             binding.rewardCost.text = "${item.costPoints} pts"
             binding.redeemButton.isEnabled = pointsBalance >= item.costPoints
             binding.redeemButton.alpha = if (binding.redeemButton.isEnabled) 1f else 0.5f
