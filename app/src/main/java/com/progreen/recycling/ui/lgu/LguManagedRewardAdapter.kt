@@ -31,6 +31,7 @@ class LguManagedRewardAdapter(
             binding.lguRewardTitle.text = item.title
             binding.lguRewardCost.text = "${item.costPoints} pts"
             binding.lguRewardDescription.text = item.description ?: "No description"
+            binding.lguRewardType.text = "Type: ${item.rewardType}"
             binding.lguRewardCode.text = item.redeemCode?.let { "Code: $it" } ?: "Code: none"
         }
     }

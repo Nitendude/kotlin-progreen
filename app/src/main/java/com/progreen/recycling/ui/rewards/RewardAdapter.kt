@@ -3,6 +3,8 @@ package com.progreen.recycling.ui.rewards
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.progreen.recycling.R
@@ -40,7 +42,7 @@ class RewardAdapter(
             binding.rewardName.text = item.title
             val provider = item.provider?.let { "Claim at: $it" } ?: "Redeem eco-friendly perks"
             val details = item.description?.takeIf { it.isNotBlank() } ?: "No description provided"
-            binding.rewardDescription.text = "$provider\n$details"
+            binding.rewardDescription.text = "$provider\nType: ${item.rewardType}\n$details"
             binding.rewardCost.text = "${item.costPoints} pts"
 
             if (item.redeemCode.isNullOrBlank()) {
@@ -50,15 +52,32 @@ class RewardAdapter(
                 binding.rewardCode.text = "Code available after redeem"
             }
 
-            binding.rewardImage.load(item.imageUrl) {
-                crossfade(true)
-                placeholder(R.drawable.ic_reward)
-                error(R.drawable.ic_reward)
+            val imageBase64 = item.imageBase64
+            if (!imageBase64.isNullOrBlank()) {
+                val bitmap = decodeBase64(imageBase64)
+                if (bitmap != null) {
+                    binding.rewardImage.setImageBitmap(bitmap)
+                } else {
+                    binding.rewardImage.setImageResource(R.drawable.ic_reward)
+                }
+            } else {
+                binding.rewardImage.load(item.imageUrl) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_reward)
+                    error(R.drawable.ic_reward)
+                }
             }
 
             binding.redeemButton.isEnabled = pointsBalance >= item.costPoints
             binding.redeemButton.alpha = if (binding.redeemButton.isEnabled) 1f else 0.5f
             binding.redeemButton.setOnClickListener { onRedeemClick(item) }
+        }
+
+        private fun decodeBase64(raw: String) = try {
+            val bytes = Base64.decode(raw, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } catch (_: Exception) {
+            null
         }
     }
 }

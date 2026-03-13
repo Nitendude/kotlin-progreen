@@ -100,11 +100,11 @@ class AppRepository private constructor(context: Context) {
 
     fun getRewards(): List<RewardItem> {
         val base = listOf(
-            RewardItem("reward_1", "Eco Tote Bag", 120, "CycleMint", "Reusable shopping tote bag"),
-            RewardItem("reward_2", "Plant Seed Kit", 200, "CycleMint", "Starter seed kit for home gardening"),
-            RewardItem("reward_3", "Reusable Bottle", 260, "CycleMint", "Insulated reusable water bottle"),
-            RewardItem("reward_4", "Coffee Voucher", 300, "CycleMint", "Discount voucher at partner cafes", redeemCode = "COFFEE300"),
-            RewardItem("reward_5", "Green Store Gift Card", 500, "CycleMint", "Gift card for eco-friendly store", redeemCode = "GREEN500")
+            RewardItem("reward_1", "Eco Tote Bag", 120, "CycleMint", "Item", "Reusable shopping tote bag"),
+            RewardItem("reward_2", "Plant Seed Kit", 200, "CycleMint", "Item", "Starter seed kit for home gardening"),
+            RewardItem("reward_3", "Reusable Bottle", 260, "CycleMint", "Item", "Insulated reusable water bottle"),
+            RewardItem("reward_4", "Coffee Voucher", 300, "CycleMint", "Voucher", "Discount voucher at partner cafes", redeemCode = "COFFEE300"),
+            RewardItem("reward_5", "Green Store Gift Card", 500, "CycleMint", "Voucher", "Gift card for eco-friendly store", redeemCode = "GREEN500")
         )
         return base + getCustomRewards()
     }
@@ -117,8 +117,9 @@ class AppRepository private constructor(context: Context) {
     fun addLguReward(
         title: String,
         costPoints: Int,
+        rewardType: String,
         description: String,
-        imageUrl: String?,
+        imageBase64: String?,
         redeemCode: String?
     ): Result<RewardItem> {
         if (getUserRole() != UserRole.LGU) {
@@ -129,12 +130,8 @@ class AppRepository private constructor(context: Context) {
         }
 
         val trimmedDescription = description.trim().ifBlank { "LGU redeemable reward" }
-        val normalizedImageUrl = imageUrl?.trim()?.takeIf { it.isNotBlank() }
-        if (normalizedImageUrl != null &&
-            !(normalizedImageUrl.startsWith("http://", ignoreCase = true) || normalizedImageUrl.startsWith("https://", ignoreCase = true))
-        ) {
-            return Result.failure(IllegalArgumentException("Image URL must start with http:// or https://"))
-        }
+        val normalizedType = rewardType.trim().ifBlank { "Item" }
+        val normalizedImage = imageBase64?.takeIf { it.isNotBlank() }
 
         val normalizedCode = redeemCode?.trim()?.takeIf { it.isNotBlank() }
 
@@ -143,8 +140,9 @@ class AppRepository private constructor(context: Context) {
             title = title.trim(),
             costPoints = costPoints,
             provider = getUserName(),
+            rewardType = normalizedType,
             description = trimmedDescription,
-            imageUrl = normalizedImageUrl,
+            imageBase64 = normalizedImage,
             redeemCode = normalizedCode
         )
 
@@ -155,8 +153,9 @@ class AppRepository private constructor(context: Context) {
                 .put("title", item.title)
                 .put("costPoints", item.costPoints)
                 .put("provider", item.provider)
+                .put("rewardType", item.rewardType)
                 .put("description", item.description)
-                .put("imageUrl", item.imageUrl)
+                .put("imageBase64", item.imageBase64)
                 .put("redeemCode", item.redeemCode)
         )
         prefs.edit().putString(KEY_LGU_REWARDS, arr.toString()).apply()
@@ -494,8 +493,10 @@ class AppRepository private constructor(context: Context) {
                     title = obj.optString("title", "Reward"),
                     costPoints = obj.optInt("costPoints", 100),
                     provider = provider,
+                    rewardType = obj.optString("rewardType", "Item"),
                     description = obj.optString("description", "LGU redeemable reward"),
                     imageUrl = obj.optString("imageUrl", "").takeIf { it.isNotBlank() },
+                    imageBase64 = obj.optString("imageBase64", "").takeIf { it.isNotBlank() },
                     redeemCode = obj.optString("redeemCode", "").takeIf { it.isNotBlank() }
                 )
             )
