@@ -272,11 +272,11 @@ class AppRepository private constructor(context: Context) {
         val jsonChunk = extractJsonObject(rawContent)
         val json = JSONObject(jsonChunk)
 
-        val type = json.optString("plasticType", "UNKNOWN").uppercase(Locale.getDefault())
-        val normalizedType = getAcceptedPlasticTypes().firstOrNull { it.uppercase(Locale.getDefault()) == type } ?: "UNKNOWN"
+        val type = json.optString("plasticType", "UNKNOWN")
+        val normalizedType = normalizeDetectedType(type)
         val confidence = json.optInt("confidence", 0).coerceIn(0, 100)
         val reason = json.optString("reason", "No reason provided")
-        val donatable = normalizedType != "UNKNOWN" && json.optBoolean("donatable", true)
+        val donatable = normalizedType != "UNKNOWN"
 
         return PlasticDetectionResult(
             plasticType = normalizedType,
@@ -284,6 +284,27 @@ class AppRepository private constructor(context: Context) {
             confidence = confidence,
             reason = reason
         )
+    }
+
+    private fun normalizeDetectedType(rawType: String): String {
+        val normalized = rawType
+            .uppercase(Locale.getDefault())
+            .replace("_", " ")
+            .replace("-", " ")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+
+        if (normalized.contains("TIN") && normalized.contains("CAN")) return "TIN CANS"
+        if (normalized.contains("POLYETHYLENE") || Regex("\\bPE\\b").containsMatchIn(normalized)) return "PE"
+        if (normalized.contains("PET") && normalized.contains("WHITE")) return "PET - WHITE"
+        if (normalized.contains("PET") && (normalized.contains("COLOR") || normalized.contains("COLOUR"))) return "PET - COLORED"
+        if (normalized.contains("HDPE")) return "HDPE"
+        if (normalized.contains("LDPE")) return "LDPE"
+        if (normalized.contains("CARTON")) return "CARTONS"
+
+        return getAcceptedPlasticTypes().firstOrNull { accepted ->
+            accepted.uppercase(Locale.getDefault()).replace("-", " ").replace(Regex("\\s+"), " ").trim() == normalized
+        } ?: "UNKNOWN"
     }
 
     private fun extractJsonObject(rawContent: String): String {
