@@ -11,6 +11,7 @@ if (localPropertiesFile.exists()) {
     localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 val groqApiKey = localProperties.getProperty("GROQ_API_KEY", "")
+val apiBaseUrl = localProperties.getProperty("API_BASE_URL", "http://10.0.2.2/progreen_api/")
 
 android {
     namespace = "com.progreen.recycling"
@@ -25,6 +26,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GROQ_API_KEY", "\"${groqApiKey.replace("\"", "\\\"")}\"")
+        buildConfigField("String", "API_BASE_URL", "\"${apiBaseUrl.replace("\"", "\\\"")}\"")
     }
 
     buildTypes {
