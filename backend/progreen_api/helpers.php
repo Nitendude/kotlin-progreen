@@ -85,6 +85,34 @@ function create_session_token(int $userId): string
     return $token;
 }
 
+function upsert_email_verification(int $userId): string
+{
+    $otp = (string) random_int(100000, 999999);
+
+    $deleteStmt = db()->prepare("DELETE FROM email_verifications WHERE user_id = :user_id");
+    $deleteStmt->execute(['user_id' => $userId]);
+
+    $stmt = db()->prepare(
+        "INSERT INTO email_verifications (user_id, otp_code, expires_at)
+         VALUES (:user_id, :otp_code, DATE_ADD(NOW(), INTERVAL 10 MINUTE))"
+    );
+    $stmt->execute([
+        'user_id' => $userId,
+        'otp_code' => $otp,
+    ]);
+
+    return $otp;
+}
+
+function send_verification_email(string $email, string $name, string $otp): bool
+{
+    $subject = 'CycleMint Email Verification Code';
+    $message = "Hello {$name},\r\n\r\nYour CycleMint OTP is: {$otp}\r\n\r\nThis code expires in 10 minutes.";
+    $headers = "From: noreply@cyclemint.local\r\n";
+
+    return mail($email, $subject, $message, $headers);
+}
+
 function user_payload(array $user): array
 {
     $stmt = db()->prepare("SELECT COUNT(*) FROM donations WHERE user_id = :user_id");

@@ -20,9 +20,23 @@ data class RegisterRequest(
     val role: String
 )
 
+data class VerifyOtpRequest(
+    val email: String,
+    val otp: String
+)
+
+data class ResendOtpRequest(
+    val email: String
+)
+
 data class AuthPayload(
     val token: String,
     val user: RemoteUserProfile
+)
+
+data class VerificationStartPayload(
+    val email: String,
+    val message: String? = null
 )
 
 data class RemoteUserProfile(

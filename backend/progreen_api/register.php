@@ -23,7 +23,7 @@ if ($check->fetch()) {
 }
 
 $insert = db()->prepare(
-    "INSERT INTO users (name, email, password_hash, role, points) VALUES (:name, :email, :password_hash, :role, 0)"
+    "INSERT INTO users (name, email, password_hash, role, points, is_verified) VALUES (:name, :email, :password_hash, :role, 0, 0)"
 );
 $insert->execute([
     'name' => $name,
@@ -33,13 +33,13 @@ $insert->execute([
 ]);
 
 $userId = (int) db()->lastInsertId();
-$token = create_session_token($userId);
+$otp = upsert_email_verification($userId);
 
-$stmt = db()->prepare("SELECT id, name, email, role, points FROM users WHERE id = :id");
-$stmt->execute(['id' => $userId]);
-$user = $stmt->fetch();
+if (!send_verification_email($email, $name, $otp)) {
+    respond(false, null, 'Account created, but OTP email could not be sent. Configure XAMPP/PHP mail first.', 500);
+}
 
 respond(true, [
-    'token' => $token,
-    'user' => user_payload($user),
+    'email' => $email,
+    'message' => 'OTP sent to your email address',
 ]);

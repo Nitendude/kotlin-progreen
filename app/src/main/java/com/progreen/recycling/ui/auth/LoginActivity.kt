@@ -45,5 +45,18 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
             overridePendingTransition(R.anim.activity_enter, R.anim.activity_exit)
         }
+
+        binding.verifyCta.setOnClickListener {
+            val pendingEmail = repository.getPendingVerificationEmail()
+            if (pendingEmail.isNullOrBlank()) {
+                toast("No pending verification email found")
+            } else {
+                startActivity(
+                    Intent(this, VerifyEmailActivity::class.java)
+                        .putExtra(VerifyEmailActivity.EXTRA_EMAIL, pendingEmail)
+                )
+                overridePendingTransition(R.anim.activity_enter, R.anim.activity_exit)
+            }
+        }
     }
 }

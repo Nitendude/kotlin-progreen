@@ -9,10 +9,16 @@ import retrofit2.http.POST
 interface AppApiService {
 
     @POST("register.php")
-    fun register(@Body body: RegisterRequest): Call<ApiEnvelope<AuthPayload>>
+    fun register(@Body body: RegisterRequest): Call<ApiEnvelope<VerificationStartPayload>>
 
     @POST("login.php")
     fun login(@Body body: LoginRequest): Call<ApiEnvelope<AuthPayload>>
+
+    @POST("verify_otp.php")
+    fun verifyOtp(@Body body: VerifyOtpRequest): Call<ApiEnvelope<AuthPayload>>
+
+    @POST("resend_otp.php")
+    fun resendOtp(@Body body: ResendOtpRequest): Call<ApiEnvelope<VerificationStartPayload>>
 
     @GET("profile.php")
     fun profile(@Header("Authorization") authorization: String): Call<ApiEnvelope<RemoteUserProfile>>

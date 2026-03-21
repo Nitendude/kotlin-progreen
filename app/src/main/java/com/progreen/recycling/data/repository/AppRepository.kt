@@ -24,6 +24,7 @@ import com.progreen.recycling.data.remote.LoginRequest
 import com.progreen.recycling.data.remote.CreditDonationRequest
 import com.progreen.recycling.data.remote.AuthPayload
 import com.progreen.recycling.data.remote.RegisterRequest
+import com.progreen.recycling.data.remote.ResendOtpRequest
 import com.progreen.recycling.data.remote.RedeemRewardRequest
 import com.progreen.recycling.data.remote.RemoteCategory
 import com.progreen.recycling.data.remote.RemoteLguDashboard
@@ -34,6 +35,7 @@ import com.progreen.recycling.data.remote.RemoteSubmission
 import com.progreen.recycling.data.remote.RemoteUserProfile
 import com.progreen.recycling.data.remote.ResolveQrRequest
 import com.progreen.recycling.data.remote.RewardCreateRequest
+import com.progreen.recycling.data.remote.VerifyOtpRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -162,7 +164,7 @@ class AppRepository private constructor(context: Context) {
         }
         return if (result.isSuccess) {
             lastErrorMessage = null
-            persistAuth(result.getOrThrow())
+            prefs.edit().putString(KEY_PENDING_VERIFICATION_EMAIL, result.getOrThrow().email).apply()
             true
         } else {
             lastErrorMessage = result.exceptionOrNull()?.message
@@ -192,6 +194,44 @@ class AppRepository private constructor(context: Context) {
     fun isLoggedIn(): Boolean = !getToken().isNullOrBlank()
 
     fun getLastErrorMessage(): String? = lastErrorMessage
+
+    fun getPendingVerificationEmail(): String? = prefs.getString(KEY_PENDING_VERIFICATION_EMAIL, null)
+
+    fun verifyOtp(email: String, otp: String): Boolean {
+        val result = executeApi {
+            AppApiClient.service.verifyOtp(
+                VerifyOtpRequest(
+                    email = email.trim(),
+                    otp = otp.trim()
+                )
+            )
+        }
+        return if (result.isSuccess) {
+            lastErrorMessage = null
+            prefs.edit().remove(KEY_PENDING_VERIFICATION_EMAIL).apply()
+            persistAuth(result.getOrThrow())
+            true
+        } else {
+            lastErrorMessage = result.exceptionOrNull()?.message
+            false
+        }
+    }
+
+    fun resendOtp(email: String): Boolean {
+        val result = executeApi {
+            AppApiClient.service.resendOtp(
+                ResendOtpRequest(email.trim())
+            )
+        }
+        return if (result.isSuccess) {
+            lastErrorMessage = null
+            prefs.edit().putString(KEY_PENDING_VERIFICATION_EMAIL, email.trim()).apply()
+            true
+        } else {
+            lastErrorMessage = result.exceptionOrNull()?.message
+            false
+        }
+    }
 
     fun logout() {
         prefs.edit().clear().apply()
@@ -519,6 +559,7 @@ class AppRepository private constructor(context: Context) {
         private const val KEY_POINTS = "points"
         private const val KEY_SUBMISSION_COUNT = "submission_count"
         private const val KEY_CATEGORIES_CACHE = "categories_cache"
+        private const val KEY_PENDING_VERIFICATION_EMAIL = "pending_verification_email"
         private const val GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
         @Volatile

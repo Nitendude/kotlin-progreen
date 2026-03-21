@@ -109,6 +109,16 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/verifyCta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:text="Already have OTP? Verify Email"
+                    android:textColor="@color/green_primary_dark"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
