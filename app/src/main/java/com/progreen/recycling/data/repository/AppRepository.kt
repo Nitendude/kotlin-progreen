@@ -45,6 +45,8 @@ import java.util.Locale
 class AppRepository private constructor(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    @Volatile
+    private var lastErrorMessage: String? = null
 
     fun getCategories(): List<RecyclingCategory> {
         val cached = loadCachedCategories()
@@ -158,7 +160,14 @@ class AppRepository private constructor(context: Context) {
                 )
             )
         }
-        return result.onSuccess(::persistAuth).isSuccess
+        return if (result.isSuccess) {
+            lastErrorMessage = null
+            persistAuth(result.getOrThrow())
+            true
+        } else {
+            lastErrorMessage = result.exceptionOrNull()?.message
+            false
+        }
     }
 
     fun login(email: String, password: String): Boolean {
@@ -170,10 +179,19 @@ class AppRepository private constructor(context: Context) {
                 )
             )
         }
-        return result.onSuccess(::persistAuth).isSuccess
+        return if (result.isSuccess) {
+            lastErrorMessage = null
+            persistAuth(result.getOrThrow())
+            true
+        } else {
+            lastErrorMessage = result.exceptionOrNull()?.message
+            false
+        }
     }
 
     fun isLoggedIn(): Boolean = !getToken().isNullOrBlank()
+
+    fun getLastErrorMessage(): String? = lastErrorMessage
 
     fun logout() {
         prefs.edit().clear().apply()

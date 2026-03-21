@@ -7,7 +7,9 @@ import com.progreen.recycling.R
 import com.progreen.recycling.data.model.User
 import com.progreen.recycling.data.repository.AppRepository
 import com.progreen.recycling.databinding.ActivityRegisterBinding
+import com.progreen.recycling.ui.main.MainActivity
 import com.progreen.recycling.util.toast
+import android.content.Intent
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -31,10 +33,14 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            repository.register(User(name = name, email = email, password = password))
-            toast("Account created")
-            finish()
-            overridePendingTransition(R.anim.activity_pop_enter, R.anim.activity_pop_exit)
+            if (repository.register(User(name = name, email = email, password = password))) {
+                toast("Account created")
+                startActivity(Intent(this, MainActivity::class.java))
+                finishAffinity()
+                overridePendingTransition(R.anim.activity_enter, R.anim.activity_exit)
+            } else {
+                toast(repository.getLastErrorMessage() ?: "Could not create account")
+            }
         }
 
         binding.loginCta.setOnClickListener {

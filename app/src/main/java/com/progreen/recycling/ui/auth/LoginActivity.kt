@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
                 overridePendingTransition(R.anim.activity_enter, R.anim.activity_exit)
                 finish()
             } else {
-                toast("Invalid credentials")
+                toast(repository.getLastErrorMessage() ?: "Invalid credentials")
             }
         }
 
