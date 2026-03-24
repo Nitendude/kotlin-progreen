@@ -186,7 +186,12 @@ class AppRepository private constructor(context: Context) {
             persistAuth(result.getOrThrow())
             true
         } else {
-            lastErrorMessage = result.exceptionOrNull()?.message
+            val message = result.exceptionOrNull()?.message
+            lastErrorMessage = if (message.equals("Invalid credentials", ignoreCase = true)) {
+                "Incorrect Email or Password"
+            } else {
+                message
+            }
             false
         }
     }
@@ -465,7 +470,10 @@ class AppRepository private constructor(context: Context) {
                 try {
                     val response = callFactory().execute()
                     if (!response.isSuccessful) {
-                        return@withContext Result.failure(IllegalStateException("Server error ${response.code()}"))
+                        val errorMessage = response.errorBody()?.string()?.let(::extractErrorMessage)
+                        return@withContext Result.failure(
+                            IllegalStateException(errorMessage ?: "Server error ${response.code()}")
+                        )
                     }
 
                     val body = response.body()
@@ -548,6 +556,14 @@ class AppRepository private constructor(context: Context) {
             throw JSONException("Groq output was not valid JSON")
         }
         return rawContent.substring(start, end + 1)
+    }
+
+    private fun extractErrorMessage(rawContent: String): String? {
+        return try {
+            JSONObject(rawContent).optString("message").takeIf { it.isNotBlank() }
+        } catch (_: JSONException) {
+            null
+        }
     }
 
     companion object {
