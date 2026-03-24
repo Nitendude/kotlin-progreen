@@ -1,11 +1,11 @@
 <?php
 
-function db(): PDO
+function app_config(): array
 {
-    static $pdo = null;
+    static $config = null;
 
-    if ($pdo instanceof PDO) {
-        return $pdo;
+    if (is_array($config)) {
+        return $config;
     }
 
     $configPath = __DIR__ . '/config.php';
@@ -14,6 +14,22 @@ function db(): PDO
     }
 
     $config = require $configPath;
+    if (!is_array($config)) {
+        throw new RuntimeException('Invalid config.php. Expected it to return an array.');
+    }
+
+    return $config;
+}
+
+function db(): PDO
+{
+    static $pdo = null;
+
+    if ($pdo instanceof PDO) {
+        return $pdo;
+    }
+
+    $config = app_config();
     $dsn = sprintf(
         'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
         $config['db_host'],
