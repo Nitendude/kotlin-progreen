@@ -29,6 +29,33 @@ $pendingAccounts = array_map(static function ($row) {
     ];
 }, $pendingStmt->fetchAll());
 
+$applicationsStmt = db()->query(
+    "SELECT ra.id, ra.application_type, ra.organization_name, ra.office_address, ra.contact_person,
+            ra.contact_email, ra.document_name, ra.status, u.name AS applicant_name, u.email AS applicant_email,
+            u.is_verified, UNIX_TIMESTAMP(ra.created_at) * 1000 AS created_at
+     FROM role_applications ra
+     INNER JOIN users u ON u.id = ra.user_id
+     WHERE ra.status = 'PENDING'
+     ORDER BY ra.created_at DESC
+     LIMIT 20"
+);
+$pendingApplications = array_map(static function ($row) {
+    return [
+        'id' => (int) $row['id'],
+        'application_type' => $row['application_type'],
+        'organization_name' => $row['organization_name'],
+        'office_address' => $row['office_address'],
+        'contact_person' => $row['contact_person'],
+        'contact_email' => $row['contact_email'],
+        'document_name' => $row['document_name'],
+        'status' => $row['status'],
+        'applicant_name' => $row['applicant_name'],
+        'applicant_email' => $row['applicant_email'],
+        'is_verified' => (int) $row['is_verified'] === 1,
+        'created_at' => (int) $row['created_at'],
+    ];
+}, $applicationsStmt->fetchAll());
+
 respond(true, [
     'stats' => [
         'users_count' => $userCount,
@@ -37,4 +64,5 @@ respond(true, [
         'pending_count' => $pendingCount,
     ],
     'pending_accounts' => $pendingAccounts,
+    'pending_applications' => $pendingApplications,
 ]);

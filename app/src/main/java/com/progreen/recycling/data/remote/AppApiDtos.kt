@@ -29,6 +29,26 @@ data class ResendOtpRequest(
     val email: String
 )
 
+data class RoleApplicationRequest(
+    val name: String,
+    val email: String,
+    val password: String,
+    @SerializedName("application_type")
+    val applicationType: String,
+    @SerializedName("organization_name")
+    val organizationName: String,
+    @SerializedName("office_address")
+    val officeAddress: String,
+    @SerializedName("contact_person")
+    val contactPerson: String,
+    @SerializedName("contact_email")
+    val contactEmail: String,
+    @SerializedName("document_name")
+    val documentName: String? = null,
+    @SerializedName("document_base64")
+    val documentBase64: String? = null
+)
+
 data class AuthPayload(
     val token: String,
     val user: RemoteUserProfile
@@ -155,6 +175,12 @@ data class AdminUpdateAccountRequest(
     val approvalStatus: String
 )
 
+data class AdminReviewApplicationRequest(
+    @SerializedName("application_id")
+    val applicationId: Long,
+    val decision: String
+)
+
 data class RemoteDonationCreditOutcome(
     @SerializedName("user_name")
     val userName: String,
@@ -243,7 +269,9 @@ data class RemoteCompanyRedemption(
 data class RemoteAdminDashboard(
     val stats: RemoteAdminStats,
     @SerializedName("pending_accounts")
-    val pendingAccounts: List<RemotePendingAccount>
+    val pendingAccounts: List<RemotePendingAccount>,
+    @SerializedName("pending_applications")
+    val pendingApplications: List<RemoteRoleApplication>
 )
 
 data class RemoteAdminStats(
@@ -278,4 +306,29 @@ data class RemoteClaimValidationResult(
     val userEmail: String,
     @SerializedName("reward_title")
     val rewardTitle: String
+)
+
+data class RemoteRoleApplication(
+    val id: Long,
+    @SerializedName("application_type")
+    val applicationType: String,
+    @SerializedName("organization_name")
+    val organizationName: String,
+    @SerializedName("office_address")
+    val officeAddress: String,
+    @SerializedName("contact_person")
+    val contactPerson: String,
+    @SerializedName("contact_email")
+    val contactEmail: String,
+    @SerializedName("document_name")
+    val documentName: String? = null,
+    val status: String,
+    @SerializedName("applicant_name")
+    val applicantName: String,
+    @SerializedName("applicant_email")
+    val applicantEmail: String,
+    @SerializedName("is_verified")
+    val isVerified: Boolean,
+    @SerializedName("created_at")
+    val createdAt: Long
 )

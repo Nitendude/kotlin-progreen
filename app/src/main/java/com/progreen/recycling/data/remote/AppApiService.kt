@@ -20,6 +20,9 @@ interface AppApiService {
     @POST("resend_otp.php")
     fun resendOtp(@Body body: ResendOtpRequest): Call<ApiEnvelope<VerificationStartPayload>>
 
+    @POST("submit_application.php")
+    fun submitApplication(@Body body: RoleApplicationRequest): Call<ApiEnvelope<VerificationStartPayload>>
+
     @GET("profile.php")
     fun profile(@Header("Authorization") authorization: String): Call<ApiEnvelope<RemoteUserProfile>>
 
@@ -72,6 +75,12 @@ interface AppApiService {
     fun adminUpdateAccount(
         @Header("Authorization") authorization: String,
         @Body body: AdminUpdateAccountRequest
+    ): Call<ApiEnvelope<Map<String, String>>>
+
+    @POST("admin_review_application.php")
+    fun adminReviewApplication(
+        @Header("Authorization") authorization: String,
+        @Body body: AdminReviewApplicationRequest
     ): Call<ApiEnvelope<Map<String, String>>>
 
     @POST("create_reward.php")

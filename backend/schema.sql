@@ -22,6 +22,24 @@ CREATE TABLE IF NOT EXISTS email_verifications (
     CONSTRAINT fk_email_verifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS role_applications (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    application_type ENUM('LGU', 'COMPANY') NOT NULL,
+    organization_name VARCHAR(190) NOT NULL,
+    office_address VARCHAR(255) NOT NULL,
+    contact_person VARCHAR(120) NOT NULL,
+    contact_email VARCHAR(190) NOT NULL,
+    document_name VARCHAR(190) NULL,
+    document_base64 LONGTEXT NULL,
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
+    reviewed_by_user_id BIGINT UNSIGNED NULL,
+    reviewed_at DATETIME NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_role_applications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_role_applications_reviewer FOREIGN KEY (reviewed_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
 CREATE TABLE IF NOT EXISTS user_sessions (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
