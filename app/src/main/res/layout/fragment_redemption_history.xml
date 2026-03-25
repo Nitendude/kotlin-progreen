@@ -10,40 +10,29 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rewards Store"
+        android:text="Redeemed Rewards"
         android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/rewardsPointsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="Your Points: 0"
-        android:textColor="@color/green_primary"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/rewardsSummaryView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="0 rewards available with your current points"
+        android:text="Track your claim tokens, codes, and redemption status."
         android:textColor="@color/text_secondary" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/openRedemptionHistoryButton"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
-        android:layout_marginTop="10dp"
-        android:text="My Redeemed Rewards"
-        android:textAllCaps="false"
-        app:cornerRadius="22dp" />
+    <TextView
+        android:id="@+id/emptyRedemptionView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="No redeemed rewards yet."
+        android:textColor="@color/text_secondary"
+        android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rewardsRecycler"
+        android:id="@+id/redemptionRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="14dp"

@@ -87,6 +87,21 @@ data class RemoteSubmission(
     val timestamp: Long
 )
 
+data class RemoteRedemptionHistoryItem(
+    @SerializedName("reward_title")
+    val rewardTitle: String,
+    @SerializedName("provider_name")
+    val providerName: String? = null,
+    @SerializedName("redeem_code")
+    val redeemCode: String? = null,
+    @SerializedName("claim_token")
+    val claimToken: String? = null,
+    val status: String,
+    @SerializedName("points_spent")
+    val pointsSpent: Int,
+    val timestamp: Long
+)
+
 data class RemoteLguSite(
     val name: String,
     val address: String,

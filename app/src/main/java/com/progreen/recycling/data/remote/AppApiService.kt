@@ -29,6 +29,9 @@ interface AppApiService {
     @GET("history.php")
     fun history(@Header("Authorization") authorization: String): Call<ApiEnvelope<List<RemoteSubmission>>>
 
+    @GET("redemptions.php")
+    fun redemptions(@Header("Authorization") authorization: String): Call<ApiEnvelope<List<RemoteRedemptionHistoryItem>>>
+
     @GET("rewards.php")
     fun rewards(@Header("Authorization") authorization: String): Call<ApiEnvelope<List<RemoteReward>>>
 

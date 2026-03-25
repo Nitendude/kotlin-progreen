@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.progreen.recycling.data.repository.AppRepository
 import com.progreen.recycling.databinding.FragmentRewardsBinding
 import com.progreen.recycling.ui.common.AppViewModelFactory
+import com.progreen.recycling.ui.main.MainActivity
+import com.progreen.recycling.ui.redemptions.RedemptionHistoryFragment
 import com.progreen.recycling.util.toast
 
 class RewardsFragment : Fragment() {
@@ -56,6 +58,9 @@ class RewardsFragment : Fragment() {
 
         binding.rewardsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.rewardsRecycler.adapter = adapter
+        binding.openRedemptionHistoryButton.setOnClickListener {
+            (activity as? MainActivity)?.openOverlayFragment(RedemptionHistoryFragment())
+        }
         refreshPoints()
     }
 

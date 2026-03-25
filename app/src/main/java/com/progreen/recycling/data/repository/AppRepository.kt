@@ -14,6 +14,7 @@ import com.progreen.recycling.data.model.PendingAccount
 import com.progreen.recycling.data.model.PlasticDetectionResult
 import com.progreen.recycling.data.model.RecyclingCategory
 import com.progreen.recycling.data.model.RewardItem
+import com.progreen.recycling.data.model.RedemptionHistoryItem
 import com.progreen.recycling.data.model.Submission
 import com.progreen.recycling.data.model.User
 import com.progreen.recycling.data.model.UserRole
@@ -426,6 +427,25 @@ class AppRepository private constructor(context: Context) {
         val token = getToken() ?: return emptyList()
         return executeApi { AppApiClient.service.history(authHeader(token)) }
             .map { items -> items.map(::mapSubmission).sortedByDescending { it.timestamp } }
+            .getOrDefault(emptyList())
+    }
+
+    fun getRedemptionHistory(): List<RedemptionHistoryItem> {
+        val token = getToken() ?: return emptyList()
+        return executeApi { AppApiClient.service.redemptions(authHeader(token)) }
+            .map { items ->
+                items.map {
+                    RedemptionHistoryItem(
+                        rewardTitle = it.rewardTitle,
+                        providerName = it.providerName,
+                        redeemCode = it.redeemCode,
+                        claimToken = it.claimToken,
+                        status = it.status,
+                        pointsSpent = it.pointsSpent,
+                        timestamp = it.timestamp
+                    )
+                }
+            }
             .getOrDefault(emptyList())
     }
 

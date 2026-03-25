@@ -12,6 +12,7 @@ import com.progreen.recycling.databinding.FragmentProfileBinding
 import com.progreen.recycling.ui.auth.LoginActivity
 import com.progreen.recycling.ui.common.AppViewModelFactory
 import com.progreen.recycling.ui.main.MainActivity
+import com.progreen.recycling.ui.redemptions.RedemptionHistoryFragment
 
 class ProfileFragment : Fragment() {
 
@@ -36,6 +37,10 @@ class ProfileFragment : Fragment() {
 
         binding.historyButton.setOnClickListener {
             (activity as? MainActivity)?.openHistoryScreen()
+        }
+
+        binding.redemptionsButton.setOnClickListener {
+            (activity as? MainActivity)?.openOverlayFragment(RedemptionHistoryFragment())
         }
 
         binding.logoutButton.setOnClickListener {
