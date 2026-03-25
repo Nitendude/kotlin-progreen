@@ -120,6 +120,15 @@ class AppRepository private constructor(context: Context) {
             .getOrDefault(emptyList())
     }
 
+    fun getManagedRewardsForCurrentUser(): List<RewardItem> {
+        val currentName = getUserName()
+        return when (getUserRole()) {
+            UserRole.LGU -> getLguManagedRewards()
+            UserRole.COMPANY, UserRole.ADMIN -> getRewards().filter { it.provider == currentName }
+            UserRole.USER -> emptyList()
+        }
+    }
+
     fun getLguManagedRewards(): List<RewardItem> {
         val token = getToken() ?: return emptyList()
         return executeApi { AppApiClient.service.lguDashboard(authHeader(token)) }
@@ -128,6 +137,22 @@ class AppRepository private constructor(context: Context) {
     }
 
     fun addLguReward(
+        title: String,
+        costPoints: Int,
+        rewardType: String,
+        description: String,
+        imageBase64: String?,
+        redeemCode: String?
+    ): Result<RewardItem> = addManagedReward(
+        title = title,
+        costPoints = costPoints,
+        rewardType = rewardType,
+        description = description,
+        imageBase64 = imageBase64,
+        redeemCode = redeemCode
+    )
+
+    fun addManagedReward(
         title: String,
         costPoints: Int,
         rewardType: String,
@@ -296,6 +321,8 @@ class AppRepository private constructor(context: Context) {
             .getOrDefault(LguDashboardStats(0.0, 0, 0, 0))
     }
 
+    fun getCollectionSiteCount(): Int = getNearestLguSites().size
+
     fun getLguDonationRecords(limit: Int = 20): List<LguDonationRecord> {
         val token = getToken() ?: return emptyList()
         return executeApi { AppApiClient.service.lguDashboard(authHeader(token)) }
@@ -416,13 +443,13 @@ class AppRepository private constructor(context: Context) {
     )
 
     private fun defaultCategories(): List<RecyclingCategory> = listOf(
-        RecyclingCategory("pet_white", "PET - WHITE", "Clear PET bottles and clean transparent containers", 12),
-        RecyclingCategory("pet_colored", "PET - COLORED", "Colored PET bottles sorted by type", 11),
-        RecyclingCategory("hdpe", "HDPE", "Detergent, shampoo, and milk jugs", 14),
-        RecyclingCategory("ldpe", "LDPE", "Plastic bags and flexible plastic wraps", 10),
-        RecyclingCategory("pe", "PE", "General polyethylene packaging", 9),
-        RecyclingCategory("tin_cans", "TIN CANS", "Clean empty tin cans", 16),
-        RecyclingCategory("cartons", "CARTONS", "Clean food and drink cartons", 8)
+        RecyclingCategory("pet_white", "PET - WHITE", "Clear PET bottles and clean transparent containers", 6),
+        RecyclingCategory("pet_colored", "PET - COLORED", "Colored PET bottles sorted by type", 3),
+        RecyclingCategory("hdpe", "HDPE", "Detergent, shampoo, and milk jugs", 10),
+        RecyclingCategory("ldpe", "LDPE", "Plastic bags and flexible plastic wraps", 1),
+        RecyclingCategory("pe", "PE", "General polyethylene packaging", 5),
+        RecyclingCategory("tin_cans", "TIN CANS", "Clean empty tin cans", 5),
+        RecyclingCategory("cartons", "CARTONS", "Clean food and drink cartons", 1)
     )
 
     private fun defaultLguSites(): List<LguSite> = listOf(

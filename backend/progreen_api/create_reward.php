@@ -3,7 +3,7 @@
 require_once __DIR__ . '/helpers.php';
 
 $actor = require_auth();
-require_role($actor, ['LGU', 'ADMIN']);
+require_role($actor, ['LGU', 'COMPANY', 'ADMIN']);
 
 $body = json_body();
 $title = trim($body['title'] ?? '');

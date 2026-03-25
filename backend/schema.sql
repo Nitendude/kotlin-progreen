@@ -86,13 +86,13 @@ CREATE TABLE IF NOT EXISTS lgu_sites (
 );
 
 INSERT INTO categories (id, name, description, points_per_kg, sort_order) VALUES
-('pet_white', 'PET - WHITE', 'Clear PET bottles and clean transparent containers', 12, 1),
-('pet_colored', 'PET - COLORED', 'Colored PET bottles sorted by type', 11, 2),
-('hdpe', 'HDPE', 'Detergent, shampoo, and milk jugs', 14, 3),
-('ldpe', 'LDPE', 'Plastic bags and flexible plastic wraps', 10, 4),
-('pe', 'PE', 'General polyethylene packaging', 9, 5),
-('tin_cans', 'TIN CANS', 'Clean empty tin cans', 16, 6),
-('cartons', 'CARTONS', 'Clean food and drink cartons', 8, 7)
+('pet_white', 'PET - WHITE', 'Clear PET bottles and clean transparent containers', 6, 1),
+('pet_colored', 'PET - COLORED', 'Colored PET bottles sorted by type', 3, 2),
+('hdpe', 'HDPE', 'Detergent, shampoo, and milk jugs', 10, 3),
+('ldpe', 'LDPE', 'Plastic bags and flexible plastic wraps', 1, 4),
+('pe', 'PE', 'General polyethylene packaging', 5, 5),
+('tin_cans', 'TIN CANS', 'Clean empty tin cans', 5, 6),
+('cartons', 'CARTONS', 'Clean food and drink cartons', 1, 7)
 ON DUPLICATE KEY UPDATE
 name = VALUES(name),
 description = VALUES(description),

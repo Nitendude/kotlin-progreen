@@ -7,7 +7,9 @@ import com.progreen.recycling.R
 import com.progreen.recycling.data.model.UserRole
 import com.progreen.recycling.data.repository.AppRepository
 import com.progreen.recycling.databinding.ActivityMainBinding
+import com.progreen.recycling.ui.admin.AdminDashboardFragment
 import com.progreen.recycling.ui.categories.CategoriesFragment
+import com.progreen.recycling.ui.company.CompanyDashboardFragment
 import com.progreen.recycling.ui.history.HistoryFragment
 import com.progreen.recycling.ui.home.HomeFragment
 import com.progreen.recycling.ui.lgu.LguDashboardFragment
@@ -63,10 +65,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun createHomeFragment(): Fragment {
         val role = AppRepository.getInstance(this).getUserRole()
-        return if (role == UserRole.LGU) {
-            LguDashboardFragment()
-        } else {
-            HomeFragment()
+        return when (role) {
+            UserRole.LGU -> LguDashboardFragment()
+            UserRole.COMPANY -> CompanyDashboardFragment()
+            UserRole.ADMIN -> AdminDashboardFragment()
+            UserRole.USER -> HomeFragment()
         }
     }
 }
