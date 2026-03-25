@@ -27,6 +27,8 @@ $pdo = db();
 $pdo->beginTransaction();
 
 try {
+    $claimToken = 'CLM-' . strtoupper(bin2hex(random_bytes(4)));
+
     $update = $pdo->prepare("UPDATE users SET points = points - :points WHERE id = :user_id");
     $update->execute([
         'points' => $costPoints,
@@ -34,12 +36,14 @@ try {
     ]);
 
     $redemption = $pdo->prepare(
-        "INSERT INTO reward_redemptions (user_id, reward_id, redeem_code, points_spent) VALUES (:user_id, :reward_id, :redeem_code, :points_spent)"
+        "INSERT INTO reward_redemptions (user_id, reward_id, redeem_code, claim_token, points_spent)
+         VALUES (:user_id, :reward_id, :redeem_code, :claim_token, :points_spent)"
     );
     $redemption->execute([
         'user_id' => $user['id'],
         'reward_id' => $rewardId,
         'redeem_code' => $reward['redeem_code'],
+        'claim_token' => $claimToken,
         'points_spent' => $costPoints,
     ]);
 
@@ -51,6 +55,7 @@ try {
 
     respond(true, [
         'redeem_code' => $reward['redeem_code'],
+        'claim_token' => $claimToken,
         'new_points' => $newPoints,
     ]);
 } catch (Throwable $e) {

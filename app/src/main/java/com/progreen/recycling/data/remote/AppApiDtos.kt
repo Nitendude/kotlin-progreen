@@ -128,6 +128,18 @@ data class RedeemRewardRequest(
     val rewardId: String
 )
 
+data class ClaimRedemptionRequest(
+    @SerializedName("claim_token")
+    val claimToken: String
+)
+
+data class AdminUpdateAccountRequest(
+    @SerializedName("user_id")
+    val userId: Long,
+    @SerializedName("approval_status")
+    val approvalStatus: String
+)
+
 data class RemoteDonationCreditOutcome(
     @SerializedName("user_name")
     val userName: String,
@@ -179,6 +191,76 @@ data class RemoteQrResolution(
 data class RemoteRedeemResult(
     @SerializedName("redeem_code")
     val redeemCode: String? = null,
+    @SerializedName("claim_token")
+    val claimToken: String? = null,
     @SerializedName("new_points")
     val newPoints: Int
+)
+
+data class RemoteCompanyDashboard(
+    val stats: RemoteCompanyStats,
+    @SerializedName("recent_redemptions")
+    val recentRedemptions: List<RemoteCompanyRedemption>
+)
+
+data class RemoteCompanyStats(
+    @SerializedName("active_campaigns")
+    val activeCampaigns: Int,
+    @SerializedName("total_redemptions")
+    val totalRedemptions: Int,
+    @SerializedName("pending_claims")
+    val pendingClaims: Int
+)
+
+data class RemoteCompanyRedemption(
+    @SerializedName("user_name")
+    val userName: String,
+    @SerializedName("user_email")
+    val userEmail: String,
+    @SerializedName("reward_title")
+    val rewardTitle: String,
+    @SerializedName("claim_token")
+    val claimToken: String,
+    val status: String,
+    val timestamp: Long
+)
+
+data class RemoteAdminDashboard(
+    val stats: RemoteAdminStats,
+    @SerializedName("pending_accounts")
+    val pendingAccounts: List<RemotePendingAccount>
+)
+
+data class RemoteAdminStats(
+    @SerializedName("users_count")
+    val usersCount: Int,
+    @SerializedName("lgus_count")
+    val lgusCount: Int,
+    @SerializedName("companies_count")
+    val companiesCount: Int,
+    @SerializedName("pending_count")
+    val pendingCount: Int
+)
+
+data class RemotePendingAccount(
+    val id: Long,
+    val name: String,
+    val email: String,
+    val role: String,
+    @SerializedName("approval_status")
+    val approvalStatus: String,
+    @SerializedName("is_verified")
+    val isVerified: Boolean,
+    @SerializedName("created_at")
+    val createdAt: Long
+)
+
+data class RemoteClaimValidationResult(
+    val message: String,
+    @SerializedName("user_name")
+    val userName: String,
+    @SerializedName("user_email")
+    val userEmail: String,
+    @SerializedName("reward_title")
+    val rewardTitle: String
 )

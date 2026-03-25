@@ -38,6 +38,12 @@ interface AppApiService {
         @Body body: RedeemRewardRequest
     ): Call<ApiEnvelope<RemoteRedeemResult>>
 
+    @POST("claim_redemption.php")
+    fun claimRedemption(
+        @Header("Authorization") authorization: String,
+        @Body body: ClaimRedemptionRequest
+    ): Call<ApiEnvelope<RemoteClaimValidationResult>>
+
     @POST("resolve_qr.php")
     fun resolveQr(
         @Header("Authorization") authorization: String,
@@ -52,6 +58,18 @@ interface AppApiService {
 
     @GET("lgu_dashboard.php")
     fun lguDashboard(@Header("Authorization") authorization: String): Call<ApiEnvelope<RemoteLguDashboard>>
+
+    @GET("company_dashboard.php")
+    fun companyDashboard(@Header("Authorization") authorization: String): Call<ApiEnvelope<RemoteCompanyDashboard>>
+
+    @GET("admin_dashboard.php")
+    fun adminDashboard(@Header("Authorization") authorization: String): Call<ApiEnvelope<RemoteAdminDashboard>>
+
+    @POST("admin_update_account.php")
+    fun adminUpdateAccount(
+        @Header("Authorization") authorization: String,
+        @Body body: AdminUpdateAccountRequest
+    ): Call<ApiEnvelope<Map<String, String>>>
 
     @POST("create_reward.php")
     fun createReward(

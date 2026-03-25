@@ -27,6 +27,11 @@ import java.util.Locale
 
 class LguDashboardFragment : Fragment() {
 
+    private enum class ScanMode {
+        USER_QR,
+        CLAIM_TOKEN
+    }
+
     private var _binding: FragmentLguDashboardBinding? = null
     private val binding get() = _binding!!
 
@@ -34,6 +39,7 @@ class LguDashboardFragment : Fragment() {
     private var categories: List<RecyclingCategory> = emptyList()
     private var scannedPayload: String? = null
     private var selectedRewardImageBase64: String? = null
+    private var scanMode: ScanMode = ScanMode.USER_QR
 
     private lateinit var rewardAdapter: LguManagedRewardAdapter
     private lateinit var donationRecordAdapter: LguDonationRecordAdapter
@@ -57,14 +63,23 @@ class LguDashboardFragment : Fragment() {
             return@registerForActivityResult
         }
 
-        scannedPayload = raw
-        val user = repository.resolveUserFromQr(raw)
-        if (user.isSuccess) {
-            val (name, email) = user.getOrThrow()
-            binding.scannedUserLabel.text = "Scanned user: $name ($email)"
-        } else {
-            binding.scannedUserLabel.text = "Invalid user QR"
-            requireContext().toast(user.exceptionOrNull()?.message ?: "Invalid user QR")
+        when (scanMode) {
+            ScanMode.USER_QR -> {
+                scannedPayload = raw
+                val user = repository.resolveUserFromQr(raw)
+                if (user.isSuccess) {
+                    val (name, email) = user.getOrThrow()
+                    binding.scannedUserLabel.text = "Scanned user: $name ($email)"
+                } else {
+                    binding.scannedUserLabel.text = "Invalid user QR"
+                    requireContext().toast(user.exceptionOrNull()?.message ?: "Invalid user QR")
+                }
+            }
+
+            ScanMode.CLAIM_TOKEN -> {
+                binding.claimTokenInput.setText(raw)
+                requireContext().toast("Claim token scanned")
+            }
         }
     }
 
@@ -116,6 +131,7 @@ class LguDashboardFragment : Fragment() {
         binding.lguDonationRecordsRecycler.adapter = donationRecordAdapter
 
         binding.scanUserQrButton.setOnClickListener {
+            scanMode = ScanMode.USER_QR
             val options = ScanOptions()
                 .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
                 .setPrompt("Scan user donation QR")
@@ -134,6 +150,19 @@ class LguDashboardFragment : Fragment() {
         }
         binding.uploadRewardImageButton.setOnClickListener {
             pickRewardImage.launch("image/*")
+        }
+        binding.scanClaimTokenButton.setOnClickListener {
+            scanMode = ScanMode.CLAIM_TOKEN
+            val options = ScanOptions()
+                .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                .setPrompt("Scan reward claim token")
+                .setBeepEnabled(false)
+                .setOrientationLocked(false)
+                .setCaptureActivity(com.journeyapps.barcodescanner.CaptureActivity::class.java)
+            qrScanner.launch(options)
+        }
+        binding.validateClaimButton.setOnClickListener {
+            validateClaim()
         }
 
         refreshDashboard()
@@ -221,6 +250,22 @@ class LguDashboardFragment : Fragment() {
 
         rewardAdapter.update(repository.getLguManagedRewards())
         donationRecordAdapter.update(repository.getLguDonationRecords())
+    }
+
+    private fun validateClaim() {
+        val claimToken = binding.claimTokenInput.text?.toString()?.trim().orEmpty()
+        if (claimToken.isBlank()) {
+            requireContext().toast("Enter or scan a claim token")
+            return
+        }
+
+        val result = repository.claimRewardToken(claimToken)
+        if (result.isSuccess) {
+            requireContext().toast(result.getOrThrow())
+            binding.claimTokenInput.text?.clear()
+        } else {
+            requireContext().toast(result.exceptionOrNull()?.message ?: "Could not validate claim")
+        }
     }
 
     private fun updateEstimate() {

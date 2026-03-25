@@ -4,9 +4,13 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.progreen.recycling.BuildConfig
 import com.progreen.recycling.data.model.DonationCreditOutcome
+import com.progreen.recycling.data.model.AdminDashboardStats
+import com.progreen.recycling.data.model.CompanyDashboardStats
+import com.progreen.recycling.data.model.CompanyRedemptionRecord
 import com.progreen.recycling.data.model.LguDashboardStats
 import com.progreen.recycling.data.model.LguDonationRecord
 import com.progreen.recycling.data.model.LguSite
+import com.progreen.recycling.data.model.PendingAccount
 import com.progreen.recycling.data.model.PlasticDetectionResult
 import com.progreen.recycling.data.model.RecyclingCategory
 import com.progreen.recycling.data.model.RewardItem
@@ -26,6 +30,8 @@ import com.progreen.recycling.data.remote.AuthPayload
 import com.progreen.recycling.data.remote.RegisterRequest
 import com.progreen.recycling.data.remote.ResendOtpRequest
 import com.progreen.recycling.data.remote.RedeemRewardRequest
+import com.progreen.recycling.data.remote.ClaimRedemptionRequest
+import com.progreen.recycling.data.remote.AdminUpdateAccountRequest
 import com.progreen.recycling.data.remote.RemoteCategory
 import com.progreen.recycling.data.remote.RemoteLguDashboard
 import com.progreen.recycling.data.remote.RemoteLguDonationRecord
@@ -323,11 +329,92 @@ class AppRepository private constructor(context: Context) {
 
     fun getCollectionSiteCount(): Int = getNearestLguSites().size
 
+    fun getCompanyDashboardStats(): CompanyDashboardStats {
+        val token = getToken() ?: return CompanyDashboardStats(0, 0, 0)
+        return executeApi { AppApiClient.service.companyDashboard(authHeader(token)) }
+            .map {
+                CompanyDashboardStats(
+                    activeCampaigns = it.stats.activeCampaigns,
+                    totalRedemptions = it.stats.totalRedemptions,
+                    pendingClaims = it.stats.pendingClaims
+                )
+            }
+            .getOrDefault(CompanyDashboardStats(0, 0, 0))
+    }
+
+    fun getCompanyRedemptionRecords(): List<CompanyRedemptionRecord> {
+        val token = getToken() ?: return emptyList()
+        return executeApi { AppApiClient.service.companyDashboard(authHeader(token)) }
+            .map { dashboard ->
+                dashboard.recentRedemptions.map {
+                    CompanyRedemptionRecord(
+                        userName = it.userName,
+                        userEmail = it.userEmail,
+                        rewardTitle = it.rewardTitle,
+                        claimToken = it.claimToken,
+                        status = it.status,
+                        timestamp = it.timestamp
+                    )
+                }
+            }
+            .getOrDefault(emptyList())
+    }
+
     fun getLguDonationRecords(limit: Int = 20): List<LguDonationRecord> {
         val token = getToken() ?: return emptyList()
         return executeApi { AppApiClient.service.lguDashboard(authHeader(token)) }
             .map { dashboard -> dashboard.records.map(::mapLguRecord).take(limit) }
             .getOrDefault(emptyList())
+    }
+
+    fun claimRewardToken(claimToken: String): Result<String> {
+        val token = getToken() ?: return Result.failure(IllegalStateException("You must log in first"))
+        return executeApi {
+            AppApiClient.service.claimRedemption(authHeader(token), ClaimRedemptionRequest(claimToken))
+        }.map { "${it.message}: ${it.rewardTitle} for ${it.userName}" }
+    }
+
+    fun getAdminDashboardStats(): AdminDashboardStats {
+        val token = getToken() ?: return AdminDashboardStats(0, 0, 0, 0)
+        return executeApi { AppApiClient.service.adminDashboard(authHeader(token)) }
+            .map {
+                AdminDashboardStats(
+                    usersCount = it.stats.usersCount,
+                    lgusCount = it.stats.lgusCount,
+                    companiesCount = it.stats.companiesCount,
+                    pendingCount = it.stats.pendingCount
+                )
+            }
+            .getOrDefault(AdminDashboardStats(0, 0, 0, 0))
+    }
+
+    fun getPendingAccounts(): List<PendingAccount> {
+        val token = getToken() ?: return emptyList()
+        return executeApi { AppApiClient.service.adminDashboard(authHeader(token)) }
+            .map { dashboard ->
+                dashboard.pendingAccounts.map {
+                    PendingAccount(
+                        id = it.id,
+                        name = it.name,
+                        email = it.email,
+                        role = it.role,
+                        approvalStatus = it.approvalStatus,
+                        isVerified = it.isVerified,
+                        createdAt = it.createdAt
+                    )
+                }
+            }
+            .getOrDefault(emptyList())
+    }
+
+    fun updateAccountApproval(userId: Long, approvalStatus: String): Result<Unit> {
+        val token = getToken() ?: return Result.failure(IllegalStateException("You must log in first"))
+        return executeApi {
+            AppApiClient.service.adminUpdateAccount(
+                authHeader(token),
+                AdminUpdateAccountRequest(userId, approvalStatus)
+            )
+        }.map { Unit }
     }
 
     fun getPoints(): Int {
@@ -360,7 +447,15 @@ class AppRepository private constructor(context: Context) {
             AppApiClient.service.redeemReward(authHeader(token), RedeemRewardRequest(rewardId))
         }.map {
             prefs.edit().putInt(KEY_POINTS, it.newPoints).apply()
-            it.redeemCode
+            buildString {
+                if (!it.redeemCode.isNullOrBlank()) {
+                    append("Code: ${it.redeemCode}")
+                }
+                if (!it.claimToken.isNullOrBlank()) {
+                    if (isNotEmpty()) append(" | ")
+                    append("Claim token: ${it.claimToken}")
+                }
+            }.ifBlank { null }
         }
     }
 

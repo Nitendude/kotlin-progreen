@@ -10,7 +10,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
     respond(false, null, 'Email and password are required', 422);
 }
 
-$stmt = db()->prepare("SELECT id, name, email, role, points, password_hash, is_verified FROM users WHERE email = :email LIMIT 1");
+$stmt = db()->prepare("SELECT id, name, email, role, points, password_hash, is_verified, approval_status FROM users WHERE email = :email LIMIT 1");
 $stmt->execute(['email' => $email]);
 $user = $stmt->fetch();
 
@@ -20,6 +20,10 @@ if (!$user || !password_verify($password, $user['password_hash'])) {
 
 if ((int) $user['is_verified'] !== 1) {
     respond(false, null, 'Email not verified yet. Verify the OTP first.', 403);
+}
+
+if ($user['approval_status'] !== 'APPROVED') {
+    respond(false, null, 'Account is awaiting admin approval.', 403);
 }
 
 $token = create_session_token((int) $user['id']);

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('USER', 'LGU', 'COMPANY', 'ADMIN') NOT NULL DEFAULT 'USER',
     points INT NOT NULL DEFAULT 0,
     is_verified TINYINT(1) NOT NULL DEFAULT 0,
+    approval_status ENUM('APPROVED', 'PENDING', 'REJECTED') NOT NULL DEFAULT 'APPROVED',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -71,10 +72,15 @@ CREATE TABLE IF NOT EXISTS reward_redemptions (
     user_id BIGINT UNSIGNED NOT NULL,
     reward_id VARCHAR(50) NOT NULL,
     redeem_code VARCHAR(120) NULL,
+    claim_token VARCHAR(80) NOT NULL UNIQUE,
+    status ENUM('PENDING', 'CLAIMED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    claimed_by_lgu_user_id BIGINT UNSIGNED NULL,
+    claimed_at DATETIME NULL,
     points_spent INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_redemptions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_redemptions_reward FOREIGN KEY (reward_id) REFERENCES rewards(id) ON DELETE CASCADE
+    CONSTRAINT fk_redemptions_reward FOREIGN KEY (reward_id) REFERENCES rewards(id) ON DELETE CASCADE,
+    CONSTRAINT fk_redemptions_claimed_by FOREIGN KEY (claimed_by_lgu_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS lgu_sites (

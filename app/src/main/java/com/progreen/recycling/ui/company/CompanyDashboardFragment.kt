@@ -28,6 +28,7 @@ class CompanyDashboardFragment : Fragment() {
 
     private lateinit var repository: AppRepository
     private lateinit var rewardAdapter: LguManagedRewardAdapter
+    private lateinit var redemptionAdapter: CompanyRedemptionAdapter
     private var selectedRewardImageBase64: String? = null
 
     private val pickRewardImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -68,6 +69,10 @@ class CompanyDashboardFragment : Fragment() {
         binding.companyRewardsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.companyRewardsRecycler.adapter = rewardAdapter
 
+        redemptionAdapter = CompanyRedemptionAdapter(emptyList())
+        binding.companyRedemptionsRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.companyRedemptionsRecycler.adapter = redemptionAdapter
+
         binding.uploadRewardImageButton.setOnClickListener {
             pickRewardImage.launch("image/*")
         }
@@ -99,13 +104,15 @@ class CompanyDashboardFragment : Fragment() {
 
     private fun refreshDashboard() {
         val managedRewards = repository.getManagedRewardsForCurrentUser()
-        val allRewards = repository.getRewards()
+        val stats = repository.getCompanyDashboardStats()
+        val redemptions = repository.getCompanyRedemptionRecords()
 
-        binding.activeCampaignsValue.text = managedRewards.size.toString()
-        binding.marketRewardsValue.text = allRewards.size.toString()
-        binding.partnerLgusValue.text = repository.getCollectionSiteCount().toString()
+        binding.activeCampaignsValue.text = stats.activeCampaigns.toString()
+        binding.marketRewardsValue.text = stats.totalRedemptions.toString()
+        binding.partnerLgusValue.text = stats.pendingClaims.toString()
         binding.materialsValue.text = repository.getCategories().size.toString()
         rewardAdapter.update(managedRewards)
+        redemptionAdapter.update(redemptions)
     }
 
     private fun addReward() {

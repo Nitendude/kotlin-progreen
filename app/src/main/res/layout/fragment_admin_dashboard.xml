@@ -51,7 +51,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Categories"
+                        android:text="Users"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -84,7 +84,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rewards"
+                        android:text="Pending Approvals"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -123,7 +123,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LGU Sites"
+                        android:text="LGU Accounts"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -156,7 +156,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Accepted Materials"
+                        android:text="Company Accounts"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -260,37 +260,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Recommended Admin Features"
+                    android:text="Pending Account Queue"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
 
-                <TextView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/pendingAccountsRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="1. Approve LGU and Company accounts"
-                    android:textColor="@color/text_secondary" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="2. Adjust points per recyclable type"
-                    android:textColor="@color/text_secondary" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="3. Monitor donations, claims, and suspicious activity"
-                    android:textColor="@color/text_secondary" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="4. Publish announcements and platform rules"
-                    android:textColor="@color/text_secondary" />
+                    android:layout_height="260dp"
+                    android:layout_marginTop="10dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
