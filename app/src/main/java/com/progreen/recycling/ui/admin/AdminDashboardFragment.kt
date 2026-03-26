@@ -20,6 +20,7 @@ class AdminDashboardFragment : Fragment() {
 
     private lateinit var repository: AppRepository
     private lateinit var pendingAdapter: PendingAccountAdapter
+    private lateinit var applicationAdapter: PendingApplicationAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAdminDashboardBinding.inflate(inflater, container, false)
@@ -39,6 +40,14 @@ class AdminDashboardFragment : Fragment() {
         )
         binding.pendingAccountsRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.pendingAccountsRecycler.adapter = pendingAdapter
+
+        applicationAdapter = PendingApplicationAdapter(
+            items = emptyList(),
+            onApprove = { application -> reviewApplication(application.id, "APPROVED") },
+            onReject = { application -> reviewApplication(application.id, "REJECTED") }
+        )
+        binding.pendingApplicationsRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.pendingApplicationsRecycler.adapter = applicationAdapter
 
         binding.manageCategoriesButton.setOnClickListener {
             (activity as? MainActivity)?.selectTab(R.id.nav_categories)
@@ -73,6 +82,7 @@ class AdminDashboardFragment : Fragment() {
         binding.siteCountValue.text = stats.lgusCount.toString()
         binding.materialCountValue.text = stats.companiesCount.toString()
         pendingAdapter.update(repository.getPendingAccounts())
+        applicationAdapter.update(repository.getPendingApplications())
     }
 
     private fun updateApproval(userId: Long, approvalStatus: String) {
@@ -82,6 +92,16 @@ class AdminDashboardFragment : Fragment() {
             refreshDashboard()
         } else {
             requireContext().toast(result.exceptionOrNull()?.message ?: "Could not update account")
+        }
+    }
+
+    private fun reviewApplication(applicationId: Long, decision: String) {
+        val result = repository.reviewRoleApplication(applicationId, decision)
+        if (result.isSuccess) {
+            requireContext().toast("Application reviewed")
+            refreshDashboard()
+        } else {
+            requireContext().toast(result.exceptionOrNull()?.message ?: "Could not review application")
         }
     }
 }

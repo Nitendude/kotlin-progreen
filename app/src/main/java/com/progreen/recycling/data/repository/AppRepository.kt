@@ -11,6 +11,7 @@ import com.progreen.recycling.data.model.LguDashboardStats
 import com.progreen.recycling.data.model.LguDonationRecord
 import com.progreen.recycling.data.model.LguSite
 import com.progreen.recycling.data.model.PendingAccount
+import com.progreen.recycling.data.model.PendingApplication
 import com.progreen.recycling.data.model.PlasticDetectionResult
 import com.progreen.recycling.data.model.RecyclingCategory
 import com.progreen.recycling.data.model.RewardItem
@@ -33,6 +34,7 @@ import com.progreen.recycling.data.remote.ResendOtpRequest
 import com.progreen.recycling.data.remote.RedeemRewardRequest
 import com.progreen.recycling.data.remote.ClaimRedemptionRequest
 import com.progreen.recycling.data.remote.AdminUpdateAccountRequest
+import com.progreen.recycling.data.remote.AdminReviewApplicationRequest
 import com.progreen.recycling.data.remote.RemoteCategory
 import com.progreen.recycling.data.remote.RemoteLguDashboard
 import com.progreen.recycling.data.remote.RemoteLguDonationRecord
@@ -41,6 +43,7 @@ import com.progreen.recycling.data.remote.RemoteReward
 import com.progreen.recycling.data.remote.RemoteSubmission
 import com.progreen.recycling.data.remote.RemoteUserProfile
 import com.progreen.recycling.data.remote.ResolveQrRequest
+import com.progreen.recycling.data.remote.RoleApplicationRequest
 import com.progreen.recycling.data.remote.RewardCreateRequest
 import com.progreen.recycling.data.remote.VerifyOtpRequest
 import kotlinx.coroutines.Dispatchers
@@ -191,6 +194,44 @@ class AppRepository private constructor(context: Context) {
                     email = user.email.trim(),
                     password = user.password,
                     role = user.role.name
+                )
+            )
+        }
+        return if (result.isSuccess) {
+            lastErrorMessage = null
+            prefs.edit().putString(KEY_PENDING_VERIFICATION_EMAIL, result.getOrThrow().email).apply()
+            true
+        } else {
+            lastErrorMessage = result.exceptionOrNull()?.message
+            false
+        }
+    }
+
+    fun submitRoleApplication(
+        name: String,
+        email: String,
+        password: String,
+        applicationType: String,
+        organizationName: String,
+        officeAddress: String,
+        contactPerson: String,
+        contactEmail: String,
+        documentName: String?,
+        documentBase64: String?
+    ): Boolean {
+        val result = executeApi {
+            AppApiClient.service.submitApplication(
+                RoleApplicationRequest(
+                    name = name.trim(),
+                    email = email.trim(),
+                    password = password,
+                    applicationType = applicationType.trim(),
+                    organizationName = organizationName.trim(),
+                    officeAddress = officeAddress.trim(),
+                    contactPerson = contactPerson.trim(),
+                    contactEmail = contactEmail.trim(),
+                    documentName = documentName,
+                    documentBase64 = documentBase64
                 )
             )
         }
@@ -408,12 +449,46 @@ class AppRepository private constructor(context: Context) {
             .getOrDefault(emptyList())
     }
 
+    fun getPendingApplications(): List<PendingApplication> {
+        val token = getToken() ?: return emptyList()
+        return executeApi { AppApiClient.service.adminDashboard(authHeader(token)) }
+            .map { dashboard ->
+                dashboard.pendingApplications.map {
+                    PendingApplication(
+                        id = it.id,
+                        applicationType = it.applicationType,
+                        organizationName = it.organizationName,
+                        officeAddress = it.officeAddress,
+                        contactPerson = it.contactPerson,
+                        contactEmail = it.contactEmail,
+                        documentName = it.documentName,
+                        status = it.status,
+                        applicantName = it.applicantName,
+                        applicantEmail = it.applicantEmail,
+                        isVerified = it.isVerified,
+                        createdAt = it.createdAt
+                    )
+                }
+            }
+            .getOrDefault(emptyList())
+    }
+
     fun updateAccountApproval(userId: Long, approvalStatus: String): Result<Unit> {
         val token = getToken() ?: return Result.failure(IllegalStateException("You must log in first"))
         return executeApi {
             AppApiClient.service.adminUpdateAccount(
                 authHeader(token),
                 AdminUpdateAccountRequest(userId, approvalStatus)
+            )
+        }.map { Unit }
+    }
+
+    fun reviewRoleApplication(applicationId: Long, decision: String): Result<Unit> {
+        val token = getToken() ?: return Result.failure(IllegalStateException("You must log in first"))
+        return executeApi {
+            AppApiClient.service.adminReviewApplication(
+                authHeader(token),
+                AdminReviewApplicationRequest(applicationId, decision)
             )
         }.map { Unit }
     }

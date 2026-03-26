@@ -49,5 +49,21 @@ class RegisterActivity : AppCompatActivity() {
             finish()
             overridePendingTransition(R.anim.activity_pop_enter, R.anim.activity_pop_exit)
         }
+
+        binding.applyLguButton.setOnClickListener {
+            startRoleApplication("LGU")
+        }
+
+        binding.applyCompanyButton.setOnClickListener {
+            startRoleApplication("COMPANY")
+        }
+    }
+
+    private fun startRoleApplication(applicationType: String) {
+        startActivity(
+            Intent(this, RoleApplicationActivity::class.java)
+                .putExtra(RoleApplicationActivity.EXTRA_APPLICATION_TYPE, applicationType)
+        )
+        overridePendingTransition(R.anim.activity_enter, R.anim.activity_exit)
     }
 }
